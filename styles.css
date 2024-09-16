@@ -1,0 +1,418 @@
+/* styles.css */
+
+/* Reset and Base Styles */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #f5f7fa;
+    color: #333;
+    font-size: 16px;
+    line-height: 1.6;
+}
+
+/* Full-screen camera feed styling for dev mode */
+.fullscreen-camera {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1000; /* Ensure it overlays other elements */
+    background-color: #000; /* Black background */
+}
+
+.fullscreen-camera video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Maintain aspect ratio */
+}
+
+
+/* Class to hide elements */
+.hidden {
+    display: none !important;
+}
+
+/* Container */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1em;
+}
+
+/* Skip Link Styles */
+.skip-link {
+    position: absolute;
+    top: -40px;
+    left: 0;
+    background: #0a84ff;
+    color: white;
+    padding: 8px;
+    z-index: 100;
+    text-decoration: none;
+}
+
+.skip-link:focus {
+    top: 0;
+}
+
+/* Header and Footer */
+header, footer {
+    background-color: #1f2937;
+    color: white;
+    padding: 1em 0;
+}
+
+header h1, footer p {
+    text-align: center;
+    font-weight: 600;
+}
+
+header h1 {
+    font-size: 1.8em;
+}
+
+footer p {
+    font-size: 0.9em;
+}
+
+/* Tab Navigation Styles */
+#tab-navigation {
+    display: flex;
+    justify-content: center;
+    margin-top: 1em;
+}
+
+#tab-navigation button {
+    padding: 0.8em 1.5em;
+    font-size: 1em;
+    border: none;
+    border-bottom: 3px solid transparent;
+    background: none;
+    color: white;
+    cursor: pointer;
+    transition: border-color 0.3s;
+}
+
+#tab-navigation button.active,
+#tab-navigation button:hover,
+#tab-navigation button:focus {
+    border-bottom: 3px solid #0a84ff;
+    outline: none;
+}
+
+/* Main Content */
+main {
+    padding: 2em 0;
+}
+
+section[role="tabpanel"] {
+    display: none;
+}
+
+section[role="tabpanel"]:not([hidden]) {
+    display: block;
+}
+
+/* Camera Section */
+#camera-section {
+    margin-bottom: 2em;
+}
+
+#camera-container {
+    position: relative;
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+#video {
+    width: 100%;
+    background-color: #000;
+}
+
+/* Capture Buttons */
+#capture-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 1em;
+    margin-top: 1em;
+}
+
+#capture-buttons button {
+    flex: 1;
+    padding: 0.8em;
+    font-size: 1.1em;
+    border: none;
+    border-radius: 25px;
+    background-color: #0a84ff;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#capture-buttons button:hover,
+#capture-buttons button:focus {
+    background-color: #0066cc;
+    outline: none;
+}
+
+
+/* Overlay Capture Button on Video */
+#video-capture-button {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    z-index: 2;
+}
+
+/* Action Log Section */
+#action-log-section {
+    margin-top: 2em;
+}
+
+#action-log-heading {
+    font-size: 1.5em;
+    margin-bottom: 0.5em;
+    text-align: center;
+}
+
+#status {
+    font-size: 1em;
+    color: #0a84ff;
+    text-align: center;
+    min-height: 1.5em;
+    margin-bottom: 1em;
+}
+
+#action-log {
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid #e5e7eb;
+    padding: 1em;
+    border-radius: 8px;
+    background-color: #fff;
+}
+
+#action-log ul {
+    list-style: none;
+}
+
+#action-log li {
+    margin-bottom: 0.8em;
+    font-size: 1em;
+    color: #333;
+}
+
+/* Settings Section */
+#settings h2 {
+    font-size: 1.5em;
+    margin-bottom: 0.5em;
+}
+
+section[role="region"] {
+    margin-bottom: 2em;
+}
+
+label {
+    display: block;
+    margin-bottom: 0.5em;
+    font-weight: 600;
+}
+
+/* Dev Mode Toggle Section */
+#dev-mode-container {
+    margin-top: 1em;
+    display: flex;
+    align-items: center;
+}
+
+#dev-mode-container label {
+    margin-left: 0.5em;
+    font-weight: normal;
+}
+
+input[type="password"],
+select,
+textarea {
+    width: 100%;
+    padding: 0.8em;
+    font-size: 1em;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    background-color: #fff;
+    color: #333;
+    transition: border-color 0.3s;
+}
+
+input[type="password"]:focus,
+select:focus,
+textarea:focus {
+    border-color: #0a84ff;
+    outline: none;
+}
+
+#save-api-key-container {
+    margin-top: 0.5em;
+    display: flex;
+    align-items: center;
+}
+
+#save-api-key-container label {
+    margin-left: 0.5em;
+    font-weight: normal;
+}
+
+#audio-prompt-container {
+    display: flex;
+    align-items: center;
+}
+
+#audio-prompt-container label {
+    margin-left: 0.5em;
+    font-weight: normal;
+}
+
+/* Customization Controls */
+#customization-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5em;
+}
+
+#customization-container button {
+    flex: 1 1 calc(50% - 0.5em);
+    padding: 0.8em;
+    font-size: 1em;
+    border: none;
+    border-radius: 8px;
+    background-color: #e5e7eb;
+    color: #333;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#customization-container button:hover,
+#customization-container button:focus {
+    background-color: #d1d5db;
+    outline: none;
+}
+
+#toggle-autoplay {
+    flex: 1 1 100%;
+}
+
+/* High Contrast Mode */
+body.high-contrast {
+    background-color: #000;
+    color: #fff;
+}
+
+body.high-contrast header,
+body.high-contrast footer {
+    background-color: #000;
+    color: #fff;
+}
+
+body.high-contrast #video {
+    border-color: #fff;
+}
+
+body.high-contrast #capture-button,
+body.high-contrast input,
+body.high-contrast select,
+body.high-contrast textarea,
+body.high-contrast #customization-container button,
+body.high-contrast #enable-audio-prompt {
+    background-color: #ffd700;
+    color: #000;
+}
+
+body.high-contrast #capture-button:hover,
+body.high-contrast #capture-button:focus,
+body.high-contrast input:focus,
+body.high-contrast select:focus,
+body.high-contrast textarea:focus,
+body.high-contrast #customization-container button:hover,
+body.high-contrast #customization-container button:focus,
+body.high-contrast #enable-audio-prompt:focus {
+    background-color: #ffa500;
+    border-color: #ffa500;
+}
+
+/* Screen Reader Only */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0,0,0,0);
+    border: 0;
+}
+
+/* NoScript Message */
+.noscript-message {
+    background-color: #ffdddd;
+    color: #a00;
+    padding: 1em;
+    text-align: center;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    #tab-navigation {
+        flex-direction: column;
+    }
+
+    #customization-container button {
+        flex: 1 1 calc(50% - 0.5em);
+    }
+
+    #toggle-autoplay {
+        flex: 1 1 100%;
+    }
+}
+
+@media (max-width: 600px) {
+    body {
+        font-size: 14px;
+    }
+
+    #capture-button {
+        font-size: 1em;
+        padding: 0.7em 1.5em;
+    }
+
+    #customization-container button {
+        padding: 0.7em;
+        font-size: 0.9em;
+    }
+
+    input[type="password"],
+    select,
+    textarea {
+        padding: 0.7em;
+        font-size: 0.9em;
+    }
+}

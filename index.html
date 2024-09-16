@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Description Assistant</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Include Google Fonts for modern typography -->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Skip Link for Accessibility -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <header>
+        <div class="container">
+            <!-- Headline Section -->
+            <div id="headline-section">
+                <h1>Hear what you See</h1>
+            </div>
+            
+            <!-- Tab Navigation -->
+            <nav id="tab-navigation" role="tablist">
+                <button role="tab" aria-selected="true" aria-controls="camera-log" id="tab-camera-log" class="active">Camera & Log</button>
+                <button role="tab" aria-selected="false" aria-controls="settings" id="tab-settings">Settings</button>
+            </nav>
+        </div>
+    </header>
+
+    <main id="main-content">
+        <!-- Camera & Log Section -->
+        <section id="camera-log" role="tabpanel" aria-labelledby="tab-camera-log">
+            <div class="container">
+            <!--!!! Camera Section --> 
+            <section id="camera-section" role="region" aria-labelledby="camera-heading">
+                <h2 id="camera-heading" class="sr-only">Camera Interface</h2>
+                <div id="camera-container">
+                    <video id="video" autoplay playsinline aria-label="Camera feed"></video>
+                    <canvas id="canvas" style="display: none;"></canvas>
+                    <!-- Overlay Capture Button on Video -->
+                    <button id="video-capture-button" aria-label="Capture Image by Tapping Camera View"></button>
+                </div>
+                <!-- Capture Buttons -->
+                <div id="capture-buttons">
+                    <button id="capture-button" aria-label="Capture Image" tabindex="0">📷 Capture Image</button>
+                    <button id="replay-button" aria-label="Replay Last Response" tabindex="0">🔁 Replay Last Response</button>
+                </div>
+            </section>
+
+                <!-- Action Log Section -->
+                <section id="action-log-section" role="region" aria-labelledby="action-log-heading">
+                    <h2 id="action-log-heading">Action Log</h2>
+                    <div id="status" role="status" aria-live="polite"></div>
+                    <div id="action-log" role="log" aria-live="polite" aria-atomic="true">
+                        <ul id="log-list">
+                            <!-- Log entries will be appended here -->
+                        </ul>
+                    </div>
+                </section>
+            </div>
+        </section>
+
+        <!-- Settings Section -->
+        <section id="settings" role="tabpanel" aria-labelledby="tab-settings" hidden>
+            <div class="container">
+                <!-- Dev Mode Toggle -->
+                <section id="dev-mode-section" role="region" aria-labelledby="dev-mode-heading">
+                    <h2 id="dev-mode-heading">Developer Mode</h2>
+                    <div id="dev-mode-container">
+                        <input type="checkbox" id="dev-mode" tabindex="0">
+                        <label for="dev-mode">Enable Developer Mode</label>
+                    </div>
+                </section>
+                
+                <!-- API Key Input -->
+                <section id="api-key-section" role="region" aria-labelledby="api-key-heading">
+                    <h2 id="api-key-heading">API Key Input</h2>
+                    <div id="api-key-container">
+                        <label for="api-key">OpenAI API Key:</label>
+                        <input type="password" id="api-key" placeholder="Enter your OpenAI API Key" aria-label="OpenAI API Key" aria-describedby="api-key-desc" tabindex="0">
+                        <span id="api-key-desc" class="sr-only">Your OpenAI API key is required to process images. Enter it securely in this field.</span>
+                        <div id="save-api-key-container">
+                            <input type="checkbox" id="save-api-key" tabindex="0">
+                            <label for="save-api-key">Save API Key for future sessions</label>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Language Selector -->
+                <section id="language-section" role="region" aria-labelledby="language-heading">
+                    <h2 id="language-heading">Language Selection</h2>
+                    <div id="language-selector">
+                        <label for="language">Select Language:</label>
+                        <select id="language" aria-label="Select Language" tabindex="0">
+                            <option value="en-US">English (US)</option>
+                            <option value="es-ES">Spanish (Spain)</option>
+                            <option value="fr-FR">French (France)</option>
+                            <!-- Add more languages as needed -->
+                        </select>
+                    </div>
+                </section>
+
+                <!-- Camera Selection -->
+                <section id="camera-selection-section" role="region" aria-labelledby="camera-selection-heading">
+                    <h2 id="camera-selection-heading">Camera Selection</h2>
+                    <div id="camera-selection">
+                        <label for="camera-select">Select Camera:</label>
+                        <select id="camera-select" aria-label="Select Camera" tabindex="0">
+                            <!-- Camera options will be populated dynamically -->
+                        </select>
+                    </div>
+                </section>
+
+                <!-- Editable Prompt Section -->
+                <section id="prompt-section" role="region" aria-labelledby="prompt-heading">
+                    <h2 id="prompt-heading">Custom Prompt</h2>
+                    <div id="prompt-container">
+                        <label for="custom-prompt">Prompt:</label>
+                        <textarea id="custom-prompt" rows="4" placeholder="Enter your custom prompt here..." aria-label="Custom Prompt" tabindex="0"></textarea>
+                    </div>
+                </section>
+
+                <!-- Audio to Prompt Feature -->
+                <section id="audio-prompt-section" role="region" aria-labelledby="audio-prompt-heading">
+                    <h2 id="audio-prompt-heading">Audio to Prompt</h2>
+                    <div id="audio-prompt-container">
+                        <input type="checkbox" id="enable-audio-prompt" tabindex="0">
+                        <label for="enable-audio-prompt">Enable Audio to Prompt via Hold on Video Feed</label>
+                    </div>
+                </section>
+
+                <!-- !!! Include Default Prompt Setting -->
+                <section id="include-default-prompt-section" role="region" aria-labelledby="include-default-prompt-heading">
+                    <h2 id="include-default-prompt-heading">Include Default Prompt</h2>
+                    <div id="include-default-prompt-container">
+                        <input type="checkbox" id="include-default-prompt" checked tabindex="0">
+                        <label for="include-default-prompt">Use default prompt when recording additional prompt</label>
+                    </div>
+                </section>
+
+                <!-- Customization Controls -->
+                <section id="customization-section" role="region" aria-labelledby="customization-heading">
+                    <h2 id="customization-heading">Customization Controls</h2>
+                    <div id="customization-container">
+                        <button id="increase-text" aria-label="Increase Text Size">A+</button>
+                        <button id="decrease-text" aria-label="Decrease Text Size">A-</button>
+                        <button id="toggle-contrast" aria-label="Toggle High Contrast">🔆</button>
+                        <button id="toggle-autoplay" aria-label="Toggle Auto-Play Audio">🔊 Auto-Play: On</button>
+                    </div>
+                </section>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 WID / Hear what you See</p>
+        </div>
+    </footer>
+
+    <noscript>
+        <div role="alert" class="noscript-message">
+            This application requires JavaScript to function correctly. Please enable JavaScript in your browser settings.
+        </div>
+    </noscript>
+
+    <script src="script.js"></script>
+</body>
+</html>
