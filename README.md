@@ -30,9 +30,12 @@ Currently everthing is Work in Progress so expect bugs.
 - **Camera & Log Tab:** Switch to the "Camera & Log" tab to start capturing images and receiving detailed descriptions. Use the "Custom Prompt" feature to ask specific questions about your surroundings and get tailored insights.
   
 ## Usage Tips
+- **Touch Camera feed to use default Prompt:** To receive a description from your point of view touch the camera feed to take an image and send it with the default Prompt to the Open AI API and get a audio response back.
 - **Hold Camera feed for Custom Prompt:** To receive a tailored description, hold down the "Custom Prompt" button and record your audio prompt. This feature is useful when you need specific details about an object or scene.
 - **Audio to Prompt:** Enable this setting for hands-free usage. Speak your instructions, and the app will interpret them to provide the most relevant description.
 
 ## Additional Information
+ **Text to speach/speach to text:** To minimze API calls the browsers internal features are used.
 - **Privacy:** Your API Key, settings and prompts are stored in local storage. This app runs on the client and makes calls to the Open Ai API and currentl uses the o1 mini model. 
+
 
