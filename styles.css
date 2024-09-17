@@ -185,6 +185,16 @@ section[role="tabpanel"]:not([hidden]) {
     z-index: 2;
 }
 
+#camera-info-text {
+    margin-top: 10px;
+    font-size: 14px;
+    color: #ccc; /* Light grey text color */
+    text-align: center;
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+    padding: 10px;
+    border-radius: 8px;
+}
+
 /* Action Log Section */
 #action-log-section {
     margin-top: 2em;

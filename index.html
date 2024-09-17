@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WID / Hear what you See / Image Description Assistant</title>
+    <title>WID / Hear what you See /Image Description Assistant</title>
     <link rel="stylesheet" href="styles.css">
     <!-- Include Google Fonts for modern typography -->
     <link rel="preconnect" href="https://fonts.gstatic.com">
@@ -41,6 +41,11 @@
                     <!-- Overlay Capture Button on Video -->
                     <button id="video-capture-button" aria-label="Capture Image by Tapping Camera View"></button>
                 </div>
+                <!-- Info/Help Text -->
+                <div id="camera-info-text">
+                    <p><strong> Tap the camera to take a photo and describe it.</strong></p>
+                    <p><strong> Tap and hold the camera to record a custom question.</strong></p>
+                </div>
                 <!-- Capture Buttons -->
                 <div id="capture-buttons">
                     <button id="capture-button" aria-label="Capture Image" tabindex="0">📷 Capture Image</button>
@@ -48,16 +53,16 @@
                 </div>
             </section>
 
-                <!-- Action Log Section -->
-                <section id="action-log-section" role="region" aria-labelledby="action-log-heading">
-                    <h2 id="action-log-heading">Action Log</h2>
-                    <div id="status" role="status" aria-live="polite"></div>
-                    <div id="action-log" role="log" aria-live="polite" aria-atomic="true">
-                        <ul id="log-list">
-                            <!-- Log entries will be appended here -->
-                        </ul>
-                    </div>
-                </section>
+            <!-- Action Log Section -->
+            <section id="action-log-section" role="region" aria-labelledby="action-log-heading">
+                <h2 id="action-log-heading">Action Log</h2>
+                <div id="status" role="status" aria-live="polite"></div>
+                <div id="action-log" role="log" aria-live="polite" aria-atomic="true">
+                    <ul id="log-list">
+                        <!-- Log entries will be appended here -->
+                    </ul>
+                </div>
+            </section>
             </div>
         </section>
 

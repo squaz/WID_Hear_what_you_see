@@ -32,11 +32,12 @@ const cameraContainer = document.getElementById('camera-container'); // Select t
 let lastResponse = '';
 let includeDefaultPrompt = true;
 let isPlaying = false;
-let isRecording = true;
+let isRecording = false;
 let recognition = null;
 let holdTimer = null;
 const holdThreshold = 2000; // 2 seconds
 let selectedLanguage = 'en-US';
+let isAudioPromptEnabled = true; // Set to true by default
 let isAutoPlay = true;
 let isHighContrast = false;
 let isHoldAction = false; // Flag to indicate hold action
@@ -599,6 +600,7 @@ function initVideoCaptureActions() {
 
 // Mouse Events
 function handleMouseDown(event) {
+    if (!isAudioPromptEnabled) return; // Return if audio prompt is disabled
     // Start hold timer
     holdTimer = setTimeout(() => {
         isHoldAction = true; // Set hold action flag
@@ -638,6 +640,7 @@ function handleMouseLeave(event) {
 // Touch Events
 function handleTouchStart(event) {
     event.preventDefault(); // Prevent default behavior
+    if (!isAudioPromptEnabled) return; // Return if audio prompt is disabled
     holdTimer = setTimeout(() => {
         isHoldAction = true; // Set hold action flag
         startRecordingAudioPrompt();
@@ -731,6 +734,7 @@ function loadSettingsFromLocalStorage() {
     loadIncludeDefaultPromptSetting();
     loadCustomizationSettings();
     loadDevModeSetting();
+    loadAudioPromptSetting();
 }
 
 // Function to load saved API key from localStorage
@@ -791,6 +795,25 @@ function loadIncludeDefaultPromptSetting() {
         includeDefaultPrompt = true;
         includeDefaultPromptCheckbox.checked = true;
     }
+}
+
+// Function to load the audio prompt setting from localStorage
+function loadAudioPromptSetting() {
+    const savedAudioPromptEnabled = localStorage.getItem('isAudioPromptEnabled');
+    isAudioPromptEnabled = savedAudioPromptEnabled === 'false' ? false : true; // Default to true if not set
+    document.getElementById('enable-audio-prompt').checked = isAudioPromptEnabled;
+}
+
+// Audio Prompt Checkbox Event Listener
+document.getElementById('enable-audio-prompt').addEventListener('change', (event) => {
+    isAudioPromptEnabled = event.target.checked;
+    saveAudioPromptSetting(); // Save the setting to localStorage
+    addToLog(`Audio prompt via hold is now ${isAudioPromptEnabled ? 'enabled' : 'disabled'}.`);
+});
+
+// Function to save the audio prompt setting to localStorage
+function saveAudioPromptSetting() {
+    localStorage.setItem('isAudioPromptEnabled', isAudioPromptEnabled);
 }
 
 // ========================
