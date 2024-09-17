@@ -32,14 +32,14 @@ const cameraContainer = document.getElementById('camera-container'); // Select t
 let lastResponse = '';
 let includeDefaultPrompt = true;
 let isPlaying = false;
-let isRecording = false;
+let isRecording = true;
 let recognition = null;
 let holdTimer = null;
 const holdThreshold = 2000; // 2 seconds
 let selectedLanguage = 'en-US';
 let isAutoPlay = true;
 let isHighContrast = false;
-let isHoldAction = ture; //false; // Flag to indicate hold action
+let isHoldAction = false; // Flag to indicate hold action
 let videoCaptureActionsInitialized = false; // Prevent multiple initializations
 let currentFontSize = 16; // Default font size in pixels
 
