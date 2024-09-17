@@ -22,7 +22,7 @@ const customPrompt = document.getElementById('custom-prompt');
 const includeDefaultPromptCheckbox = document.getElementById('include-default-prompt');
 const devModeCheckbox = document.getElementById('dev-mode');
 const actionLogSection = document.getElementById('action-log-section');
-const headlineSection = document.getElementById('headline-section'); // Select the headline section
+const header = document.querySelector('header'); //document.getElementById('headline-section'); // Select the headline section
 const footer = document.querySelector('footer'); // Select the footer
 const cameraContainer = document.getElementById('camera-container'); // Select the camera container
 
@@ -850,7 +850,7 @@ function showDevElements() {
     actionLogSection.classList.remove('hidden');
     replayButton.classList.remove('hidden');
     captureButton.classList.remove('hidden');
-    headlineSection.classList.remove('hidden');
+    header.classList.remove('hidden');
     footer.classList.remove('hidden');
 }
 
@@ -859,7 +859,7 @@ function hideDevElements() {
     actionLogSection.classList.add('hidden');
     replayButton.classList.add('hidden');
     captureButton.classList.add('hidden');
-    headlineSection.classList.add('hidden');
+    header.classList.add('hidden');
     footer.classList.add('hidden');
 }
 

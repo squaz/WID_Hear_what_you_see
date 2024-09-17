@@ -92,25 +92,30 @@ footer p {
     display: flex;
     justify-content: center;
     margin-top: 1em;
+    margin-bottom: 1em; /* Add margin to separate from footer */
 }
 
 #tab-navigation button {
     padding: 0.8em 1.5em;
-    font-size: 1em;
+    font-size: 1.2em; /* Adjust the font size */
     border: none;
     border-bottom: 3px solid transparent;
-    background: none;
+    background-color: #0a84ff;; /* Change background color */
     color: white;
     cursor: pointer;
-    transition: border-color 0.3s;
+    transition: background-color 0.3s, border-color 0.3s;
+    border-radius: 8px; /* Optional: rounded corners */
+    margin: 0 5px; /* Optional: spacing between tabs */
 }
 
 #tab-navigation button.active,
 #tab-navigation button:hover,
 #tab-navigation button:focus {
+    background-color: #0a84ff; /* Change background color for active/hover states */
     border-bottom: 3px solid #0a84ff;
     outline: none;
 }
+
 
 /* Main Content */
 main {
