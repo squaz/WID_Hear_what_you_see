@@ -1,2 +1,5 @@
 #ignore old_versions
 Old/
+
+#ignore batch files
+copy_files_to_clipboard.sh
