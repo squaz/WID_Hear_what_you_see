@@ -64,7 +64,7 @@ class SettingsManager {
                 obj = obj[key];
             }
         });
-        this.saveSettings();
+        // Do not save immediately; save when 'Save Settings' is clicked
     }
 
     deepMerge(target, source) {

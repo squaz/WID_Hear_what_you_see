@@ -32,6 +32,7 @@ const header = document.querySelector('header');
 const footer = document.querySelector('footer');
 const cameraContainer = document.getElementById('camera-container');
 const enableAudioPromptCheckbox = document.getElementById('enable-audio-prompt');
+const saveSettingsButton = document.getElementById('save-settings-button'); // Added
 
 // ========================
 // Initialize Logger
@@ -70,6 +71,7 @@ const uiManager = new UIManager({
     cameraSelect,            // Added
     apiKeyInput,             // Added
     saveApiKeyCheckbox,      // Added
+    saveSettingsButton,      // Added
     logger
 });
 
@@ -96,7 +98,6 @@ window.addEventListener('load', async () => {
     initTabNavigation(); // Ensure tab navigation is initialized
     activateTab('camera-log'); // Set 'camera-log' as the default active tab
 });
-
 
 // ========================
 // Capture and Analyze Image Functions
@@ -155,7 +156,8 @@ async function captureAndAnalyzeImage(audioPrompt = '') {
         return;
     }
 
-    const apiKey = apiKeyInput.value.trim();
+    const apiKey = settingsManager.get('api.apiKey'); // Retrieve saved API key
+    const saveApiKey = settingsManager.get('api.saveApiKey');
     if (!apiKey) {
         logger.add('API Key missing. Please add your OpenAI API key.', true);
         await speechManager.speak('Please add your API key.');

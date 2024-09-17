@@ -4,10 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WID / Hear what you See / Image Description Assistant</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles/styles.css">
     <!-- Include Google Fonts for modern typography -->
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <!-- Include Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-papzX8InUNNzURjxfr1eZ8Xx9X5N+j4x1X2Yrq+HT3cX9f6SBl/1ms0jtUYR33MT5UG4PPM5xC0eRRTVdbOSmg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <body>
     <!-- Skip Link for Accessibility -->
@@ -33,8 +35,12 @@
                         <video id="video" autoplay playsinline aria-label="Camera feed"></video>
                         <canvas id="canvas" style="display: none;"></canvas>
                         <!-- Overlay Capture Button on Video -->
-                        <button id="video-capture-button" aria-label="Capture Image by Tapping Camera View"></button>
+                        <button id="video-capture-button" aria-label="Capture Image by Tapping Camera View">
+                            <i class="fas fa-camera"></i>
+                        </button>
                     </div>
+                </section>    
+                <section id="button-and-info" role="region" aria-labelledby="button-and-info-heading">    
                     <!-- Info/Help Text -->
                     <div id="camera-info-text">
                         <p><strong>Tap the camera to take a photo and describe it.</strong></p>
@@ -42,8 +48,12 @@
                     </div>
                     <!-- Capture Buttons -->
                     <div id="capture-buttons">
-                        <button id="capture-button" aria-label="Capture Image" tabindex="0">📷 Capture Image</button>
-                        <button id="replay-button" aria-label="Replay Last Response" tabindex="0">🔁 Replay Last Response</button>
+                        <button id="capture-button" aria-label="Capture Image" tabindex="0">
+                            <i class="fas fa-camera"></i> Capture Image
+                        </button>
+                        <button id="replay-button" aria-label="Replay Last Response" tabindex="0">
+                            <i class="fas fa-redo"></i> Replay Last Response
+                        </button>
                     </div>
                 </section>
 
@@ -135,10 +145,17 @@
                 <section id="customization-section" role="region" aria-labelledby="customization-heading">
                     <h2 id="customization-heading">Customization Controls</h2>
                     <div id="customization-container">
-                        <button id="increase-text" aria-label="Increase Text Size">A+</button>
-                        <button id="decrease-text" aria-label="Decrease Text Size">A-</button>
-                        <button id="toggle-contrast" aria-label="Toggle High Contrast">🔆</button>
-                        <button id="toggle-autoplay" aria-label="Toggle Auto-Play Audio">🔊 Auto-Play: On</button>
+                        <button id="increase-text" aria-label="Increase Text Size"><i class="fas fa-plus"></i> A+</button>
+                        <button id="decrease-text" aria-label="Decrease Text Size"><i class="fas fa-minus"></i> A-</button>
+                        <button id="toggle-autoplay" aria-label="Toggle Auto-Play Audio"><i class="fas fa-volume-up"></i> Auto-Play: On</button>
+                    </div>
+                </section>
+
+                <!-- Save Settings Button -->
+                <section id="save-settings-section" role="region" aria-labelledby="save-settings-heading">
+                    <h2 id="save-settings-heading" class="sr-only">Save Settings</h2>
+                    <div id="save-settings-container">
+                        <button id="save-settings-button" aria-label="Save Settings"><i class="fas fa-save"></i> Save Settings</button>
                     </div>
                 </section>
             </div>
@@ -163,6 +180,6 @@
         </div>
     </noscript>
 
-    <script src="script.js"></script>
+    <script type="module" src="scripts/main.js"></script>
 </body>
 </html>

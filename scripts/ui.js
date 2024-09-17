@@ -23,6 +23,7 @@ export default class UIManager {
         cameraSelect,            // Added
         apiKeyInput,             // Added
         saveApiKeyCheckbox,      // Added
+        saveSettingsButton,      // Added
         logger
     }) {
         this.increaseTextButton = increaseTextButton;
@@ -43,13 +44,14 @@ export default class UIManager {
         this.cameraSelect = cameraSelect;                // Added
         this.apiKeyInput = apiKeyInput;                  // Added
         this.saveApiKeyCheckbox = saveApiKeyCheckbox;    // Added
+        this.saveSettingsButton = saveSettingsButton;    // Added
         this.logger = logger;
         this.currentFontSize = settingsManager.get('customization.fontSize') || 16;
     }
 
     initializeUI() {
         this.applyCustomizationSettings();
-        this.loadApiKey();
+        this.loadSettings();
         this.setDefaultPrompt();
         this.addEventListeners();
     }
@@ -60,7 +62,7 @@ export default class UIManager {
 
         // Auto-Play
         const isAutoPlay = settingsManager.get('customization.isAutoPlay');
-        this.toggleAutoplayButton.textContent = `≡ƒöè Auto-Play: ${isAutoPlay ? 'On' : 'Off'}`;
+        this.toggleAutoplayButton.textContent = `Auto-Play: ${isAutoPlay ? 'On' : 'Off'}`;
 
         // Language
         const selectedLanguage = settingsManager.get('customization.selectedLanguage');
@@ -80,24 +82,35 @@ export default class UIManager {
         this.setDevMode(isDevModeEnabled);
     }
 
-    loadApiKey() {
+    loadSettings() {
+        // Load API Key if saved
         const savedApiKey = settingsManager.get('api.apiKey');
         const saveApiKey = settingsManager.get('api.saveApiKey');
 
         if (saveApiKey && savedApiKey) {
             this.apiKeyInput.value = savedApiKey;
             this.saveApiKeyCheckbox.checked = true;
+        } else {
+            this.apiKeyInput.value = '';
+            this.saveApiKeyCheckbox.checked = false;
         }
+
+        // Load other settings are already handled in applyCustomizationSettings()
     }
 
     setDefaultPrompt() {
+        const selectedLanguage = settingsManager.get('customization.selectedLanguage');
         const customPromptText = settingsManager.get('customization.customPrompt').trim();
+        
+        // If custom prompt is empty, set to default prompt
         if (customPromptText === '') {
-            const selectedLanguage = settingsManager.get('customization.selectedLanguage');
             const defaultPrompt = this.getDefaultPrompt(selectedLanguage);
             this.customPrompt.value = defaultPrompt;
             settingsManager.set('customization.customPrompt', defaultPrompt);
             this.logger.add('Default prompt set based on selected language.');
+        } else {
+            // Otherwise, use the existing custom prompt
+            this.customPrompt.value = customPromptText;
         }
     }
 
@@ -107,7 +120,6 @@ export default class UIManager {
             this.currentFontSize += 2;
             document.body.style.fontSize = `${this.currentFontSize}px`;
             this.logger.add(`Text size increased to ${this.currentFontSize}px.`);
-            settingsManager.set('customization.fontSize', this.currentFontSize);
         });
 
         this.decreaseTextButton.addEventListener('click', () => {
@@ -115,7 +127,6 @@ export default class UIManager {
                 this.currentFontSize -= 2;
                 document.body.style.fontSize = `${this.currentFontSize}px`;
                 this.logger.add(`Text size decreased to ${this.currentFontSize}px.`);
-                settingsManager.set('customization.fontSize', this.currentFontSize);
             }
         });
 
@@ -123,7 +134,7 @@ export default class UIManager {
         this.toggleAutoplayButton.addEventListener('click', () => {
             const isAutoPlay = settingsManager.get('customization.isAutoPlay');
             settingsManager.set('customization.isAutoPlay', !isAutoPlay);
-            this.toggleAutoplayButton.textContent = `≡ƒöè Auto-Play: ${!isAutoPlay ? 'On' : 'Off'}`;
+            this.toggleAutoplayButton.textContent = `Auto-Play: ${!isAutoPlay ? 'On' : 'Off'}`;
             this.logger.add(`Auto-play audio is now ${!isAutoPlay ? 'enabled' : 'disabled'}.`);
         });
 
@@ -132,14 +143,12 @@ export default class UIManager {
             const selectedLanguage = event.target.value;
             settingsManager.set('customization.selectedLanguage', selectedLanguage);
             this.logger.add(`Language changed to ${event.target.selectedOptions[0].text}.`);
-            // Update custom prompt to default for selected language if necessary
+            
+            // Always update the prompt to the default prompt for the selected language
             const defaultPrompt = this.getDefaultPrompt(selectedLanguage);
-            const currentPrompt = this.customPrompt.value.trim();
-            if (currentPrompt === '' || currentPrompt === settingsManager.get('customization.customPrompt')) {
-                this.customPrompt.value = defaultPrompt;
-                settingsManager.set('customization.customPrompt', defaultPrompt);
-                this.logger.add('Custom prompt updated to default for the selected language.');
-            }
+            this.customPrompt.value = defaultPrompt;
+            settingsManager.set('customization.customPrompt', defaultPrompt);
+            this.logger.add('Custom prompt updated to default for the selected language.');
         });
 
         // Include Default Prompt Checkbox
@@ -157,13 +166,6 @@ export default class UIManager {
             this.logger.add(`Audio prompt via hold is now ${isAudioPromptEnabled ? 'enabled' : 'disabled'}.`);
         });
 
-        // Custom Prompt Input
-        this.customPrompt.addEventListener('input', () => {
-            const prompt = this.customPrompt.value.trim();
-            settingsManager.set('customization.customPrompt', prompt);
-            this.logger.add('Custom prompt saved.');
-        });
-
         // Dev Mode Checkbox
         this.devModeCheckbox.addEventListener('change', () => {
             const isDevModeEnabled = this.devModeCheckbox.checked;
@@ -171,32 +173,42 @@ export default class UIManager {
             this.setDevMode(isDevModeEnabled);
         });
 
-        // Save API Key Checkbox
-        this.saveApiKeyCheckbox.addEventListener('change', () => {
-            const saveApiKey = this.saveApiKeyCheckbox.checked;
-            settingsManager.set('api.saveApiKey', saveApiKey);
-            if (!saveApiKey) {
-                // If unchecked, remove the saved API key
-                settingsManager.set('api.apiKey', '');
-                this.apiKeyInput.value = '';
-                this.logger.add('API key removal confirmed.');
-            } else {
-                // If checked, save the current API key
-                const currentApiKey = this.apiKeyInput.value.trim();
-                settingsManager.set('api.apiKey', currentApiKey);
-                this.logger.add('API key saved for future sessions.');
-            }
+        // Save Settings Button
+        this.saveSettingsButton.addEventListener('click', () => {
+            this.saveAllSettings();
         });
+    }
 
-        // API Key Input
-        this.apiKeyInput.addEventListener('input', () => {
-            const apiKey = this.apiKeyInput.value.trim();
-            const saveApiKey = this.saveApiKeyCheckbox.checked;
-            if (saveApiKey) {
-                settingsManager.set('api.apiKey', apiKey);
-                this.logger.add('API key updated and saved.');
-            }
-        });
+    saveAllSettings() {
+        // Collect all settings from the form
+        const apiKey = this.apiKeyInput.value.trim();
+        const saveApiKey = this.saveApiKeyCheckbox.checked;
+        const selectedLanguage = this.languageSelector.value;
+        const selectedCamera = this.cameraSelect.value;
+        const customPrompt = this.customPrompt.value.trim();
+        const includeDefaultPrompt = this.includeDefaultPromptCheckbox.checked;
+        const isAudioPromptEnabled = this.enableAudioPromptCheckbox.checked;
+        const isDevModeEnabled = this.devModeCheckbox.checked;
+        const fontSize = this.currentFontSize;
+        const isAutoPlay = settingsManager.get('customization.isAutoPlay'); // Current state
+
+        // Update settings in settingsManager
+        settingsManager.set('api.apiKey', saveApiKey ? apiKey : '');
+        settingsManager.set('api.saveApiKey', saveApiKey);
+        settingsManager.set('customization.selectedLanguage', selectedLanguage);
+        settingsManager.set('customization.customPrompt', customPrompt === '' ? this.getDefaultPrompt(selectedLanguage) : customPrompt);
+        settingsManager.set('customization.includeDefaultPrompt', includeDefaultPrompt);
+        settingsManager.set('customization.isAudioPromptEnabled', isAudioPromptEnabled);
+        settingsManager.set('devMode.isDevModeEnabled', isDevModeEnabled);
+        settingsManager.set('customization.fontSize', fontSize);
+        // Note: isAutoPlay is already toggled via the toggleAutoplayButton event listener
+
+        // Save settings to localStorage
+        settingsManager.saveSettings();
+
+        // Provide feedback to the user
+        this.logger.add('Settings have been saved successfully.');
+        alert('Settings have been saved successfully.');
     }
 
     getDefaultPrompt(language) {
@@ -247,16 +259,16 @@ export default class UIManager {
     }
 
     disableCaptureButtons() {
-        this.captureButton.disabled = true;
-        this.replayButton.disabled = true;
-        this.videoCaptureButton.disabled = true;  // Now defined
-        this.cameraSelect.disabled = true;        // Now defined
+        if (this.captureButton) this.captureButton.disabled = true;
+        if (this.replayButton) this.replayButton.disabled = true;
+        if (this.videoCaptureButton) this.videoCaptureButton.disabled = true;
+        if (this.cameraSelect) this.cameraSelect.disabled = true;
     }
 
     enableCaptureButtons() {
-        this.captureButton.disabled = false;
-        this.replayButton.disabled = false;
-        this.videoCaptureButton.disabled = false; // Now defined
-        this.cameraSelect.disabled = false;       // Now defined
+        if (this.captureButton) this.captureButton.disabled = false;
+        if (this.replayButton) this.replayButton.disabled = false;
+        if (this.videoCaptureButton) this.videoCaptureButton.disabled = false;
+        if (this.cameraSelect) this.cameraSelect.disabled = false;
     }
 }

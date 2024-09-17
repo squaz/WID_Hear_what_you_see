@@ -149,6 +149,13 @@ section[role="tabpanel"]:not([hidden]) {
     color: white;
     cursor: pointer;
     transition: background-color 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#capture-buttons button i {
+    margin-right: 0.5em;
 }
 
 #capture-buttons button:hover,
@@ -169,6 +176,14 @@ section[role="tabpanel"]:not([hidden]) {
     border: none;
     cursor: pointer;
     z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#video-capture-button i {
+    font-size: 3em;
+    color: rgba(255, 255, 255, 0.7);
 }
 
 #camera-info-text {
@@ -305,6 +320,13 @@ textarea:focus {
     color: #333;
     cursor: pointer;
     transition: background-color 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#customization-container button i {
+    margin-right: 0.5em;
 }
 
 #customization-container button:hover,
@@ -315,6 +337,40 @@ textarea:focus {
 
 #toggle-autoplay {
     flex: 1 1 100%;
+}
+
+/* Save Settings Button */
+#save-settings-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 1em;
+    width: 100%;
+}
+
+#save-settings-button {
+    padding: 0.8em 1.5em;
+    font-size: 1.1em;
+    border: none;
+    border-radius: 8px;
+    background-color: #28a745; /* Green color for save */
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 3em; 
+}
+
+#save-settings-button i {
+    margin-right: 0.5em;
+}
+
+#save-settings-button:hover,
+#save-settings-button:focus {
+    background-color: #218838;
+    outline: none;
 }
 
 /* Screen Reader Only */
@@ -357,7 +413,9 @@ textarea:focus {
         font-size: 14px;
     }
 
-    #capture-button {
+    #capture-button,
+    #replay-button,
+    #save-settings-button {
         font-size: 1em;
         padding: 0.7em 1.5em;
     }
