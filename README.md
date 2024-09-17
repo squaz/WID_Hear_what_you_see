@@ -1,41 +1,93 @@
-# WID - Image Description Assistant: Quick Start Guide
+# Hear what you See
 
-The Image Description Assistant is a non commerical reasearch application designed to help blind and visually impaired users understand their surroundings. By capturing images and providing detailed descriptions through the OpenAI API, the app makes it easier to navigate and interact with the world. This guide will walk you through setting up and using the app effectively.
-Currently everthing is Work in Progress so expect bugs.
+**Hear what you See** is an accessible web application designed to empower visually impaired users by enabling them to capture images and receive descriptive analyses using advanced AI technology. By leveraging image capture and optional audio prompts, users can gain a deeper understanding of their surroundings through synthesized audio descriptions.
+
+## Table of Contents
+- [Features](#features)
+- [Workflows](#workflows)
+  - [1. Sending Image with Default Prompt](#1-sending-image-with-default-prompt)
+  - [2. Sending Image with Audio Message](#2-sending-image-with-audio-message)
+- [Technical Details](#technical-details)
+  - [Client-Side Operations](#client-side-operations)
+  - [AI Integration](#ai-integration)
+  - [Speech Capabilities](#speech-capabilities)
+- [Usage Notes](#usage-notes)
+- [Disclaimer](#disclaimer)
+- [Additional Recommendations](#additional-recommendations)
+  - [Security Enhancements](#security-enhancements)
+  - [User Feedback Mechanisms](#user-feedback-mechanisms)
+  - [Accessibility Testing](#accessibility-testing)
+  - [Performance Optimization](#performance-optimization)
+  - [Localization](#localization)
 
 ## Features
-- **Detailed Image Descriptions:** Captures and describes images to help users understand their surroundings.
-- **Custom Prompts:** Hold to record audio prompts for specific requests.
-- **Multi-Language Support:** Choose your preferred language for descriptions.
-- **Audio to Prompt:** Converts spoken instructions into prompts for image analysis.
+- **Image Capture**: Utilize your device's camera to capture images effortlessly.
+- **Audio Prompts**: Optionally add an audio message to provide context or specific instructions.
+- **AI Analysis**: Send captured images to the GPT4o Mini model for descriptive analysis.
+- **Customization**: Adjust text size, toggle high-contrast mode, and manage audio playback settings.
+- **Developer Mode**: Access advanced features for enhanced functionality and debugging.
+- **Persistent Settings**: All user preferences are saved for a seamless experience across sessions.
 
-## How to Set Up
-### 1. Open the App
-- Launch the Image Description Assistant in your browser to get started.
+## Workflows
 
-### 2. Go to Settings
-- Navigate to the "Settings" tab by selecting it from the top menu. Here, you'll configure the app to suit your needs.
+### 1. Sending Image with Default Prompt
+1. **Capture Image**: Tap the Capture Image button to take a photo using your device's camera.
+2. **Automatic Description**: The application automatically sends the captured image to the GPT4o Mini AI model with a default prompt tailored to provide a concise description of the image.
+3. **Receive Description**: The AI processes the image and returns a descriptive text, which is read aloud using your device's text-to-speech capabilities.
 
-### 3. Enter API Key
-- **API Key Input:** In the "API Key Input" section, enter your OpenAI API Key. This key is essential for processing images and generating descriptions.
-- **Save API Key:** Optionally, select "Save API Key to local storage for future sessions" to avoid entering the key each time you use the app.
+### 2. Sending Image with Audio Message
+1. **Initiate Audio Prompt**: Press and hold the camera view for at least 2 seconds to activate the audio recording mode.
+2. **Record Audio**: Speak your custom instructions or context regarding the image you are about to capture.
+3. **Capture Image**: While still holding, release the button to capture the image.
+4. **Combined Analysis**: The application sends both the captured image and your recorded audio message to the GPT4o Mini AI model. The AI integrates your audio prompt with the default prompt to provide a tailored description.
+5. **Receive Description**: The AI returns a descriptive text based on both the image and your audio input, which is read aloud using your device's text-to-speech capabilities.
 
-### 4. Customize Settings (Optional)
-- **Language Selection:** Choose your preferred language for image descriptions.
-- **Developer Mode:** Enable "Developer Mode" for more information and a log on the main site.
-- **Custom Prompts:** Enable the "Audio to Prompt" feature to allow voice commands. Simply hold the camera feed for more then 2 seconds to record audio prompts and receive customized image descriptions.
-- **Hold for Custom Prompt:** For quick, on-the-go customization, hold the "Custom Prompt" button to record an audio prompt. This will override the default prompt with your specific query, providing a tailored description for each image captured.
+## Technical Details
 
-## You're All Set!
-- **Camera & Log Tab:** Switch to the "Camera & Log" tab to start capturing images and receiving detailed descriptions. Use the "Custom Prompt" feature to ask specific questions about your surroundings and get tailored insights.
-  
-## Usage Tips
-- **Touch Camera feed to use default Prompt:** To receive a description from your point of view touch the camera feed to take an image and send it with the default Prompt to the Open AI API and get a audio response back.
-- **Hold Camera feed for Custom Prompt:** To receive a tailored description, hold down the "Custom Prompt" button and record your audio prompt. This feature is useful when you need specific details about an object or scene.
-- **Audio to Prompt:** Enable this setting for hands-free usage. Speak your instructions, and the app will interpret them to provide the most relevant description.
+### Client-Side Operations
+- **Privacy & Security**: All operations, including image capture, audio recording, and AI interactions, are performed entirely on the client side. No personal data, images, or audio recordings are sent to or stored on external servers, except for the direct interaction with the OpenAI API for analysis.
+- **Local Storage**: User settings such as API keys, selected camera, language preferences, and customization choices are securely stored in the browser's localStorage. These settings persist across sessions, ensuring a consistent user experience.
 
-## Additional Information
- **Text to speach/speach to text:** To minimze API calls the browsers internal features are used.
-- **Privacy:** Your API Key, settings and prompts are stored in local storage. This app runs on the client and makes calls to the Open Ai API and currentl uses the o1 mini model. 
+### AI Integration
+- **GPT4o Mini**: The application utilizes the GPT4o Mini model from OpenAI for image analysis.
+- **Why GPT4o Mini?**
+  - **Efficiency**: Offers a balance between performance and computational efficiency, making it suitable for client-side applications.
+  - **Cost-Effective**: Reduces the cost associated with API usage while still providing meaningful insights.
+  - **Quick Response**: Faster processing times enhance the user experience by delivering prompt descriptions.
 
+### Speech Capabilities
+- **Text-to-Speech (TTS)**: Descriptions and status updates are read aloud using the browser's native TTS engine, ensuring compatibility across various devices and languages without relying on external services.
+- **Speech-to-Text (STT)**: Audio prompts are captured and transcribed using the browser's built-in STT capabilities, allowing users to provide context or specific instructions seamlessly.
 
+## Usage Notes
+- **Camera Permissions**: Upon first use, the application will request access to your device's camera. Please grant the necessary permissions to enable image capture functionality.
+- **API Key Configuration**: Users must provide a valid OpenAI API key to utilize the image analysis features. For security, the API key is stored locally only if the user opts to save it for future sessions.
+- **Customization**: Adjust text sizes and toggle high-contrast mode to suit your visual preferences. Enable or disable audio playback based on your comfort and environment.
+
+## Disclaimer
+**Hear what you See** is a research project developed to explore the integration of accessibility features with advanced AI technologies. It is not intended for commercial use. While every effort has been made to ensure functionality and accessibility, users should exercise caution and discretion when using the application. The developers do not assume any liability for misuse or technical issues that may arise during its operation.
+
+## Additional Recommendations
+
+### Security Enhancements
+- **API Key Protection**: While storing the API key in localStorage offers convenience, it poses potential security risks. Consider implementing server-side handling for API interactions in future iterations to enhance security.
+
+### User Feedback Mechanisms
+- **Loading Indicators**: Implement visual indicators during API calls to inform users that processing is underway.
+- **Error Notifications**: Enhance error messages with actionable steps to guide users in resolving issues.
+
+### Accessibility Testing
+- **Screen Reader Compatibility**: Regularly test the application with popular screen readers (e.g., NVDA, JAWS, VoiceOver) to ensure seamless navigation and interaction.
+- **Keyboard Navigation**: Ensure that all interactive elements are reachable and operable via keyboard alone.
+
+### Performance Optimization
+- **Lazy Loading**: Defer loading of non-critical resources to improve initial load times.
+- **Resource Management**: Optimize image handling and API interactions to reduce latency and enhance user experience.
+
+### Localization
+- **Comprehensive Language Support**: Expand the language prompts mapping to include more languages, catering to a broader user base.
+- **Dynamic Content Translation**: Ensure that all user-facing text adapts to the selected language for a fully localized experience.
+
+---
+
+Feel free to integrate these changes into your project. If you encounter any issues or need further assistance, don't hesitate to open a issue!
