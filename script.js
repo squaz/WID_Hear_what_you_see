@@ -41,6 +41,7 @@ let isAutoPlay = true;
 let isHighContrast = false;
 let isHoldAction = false; // Flag to indicate hold action
 let videoCaptureActionsInitialized = false; // Prevent multiple initializations
+let currentFontSize = 16; // Default font size in pixels
 
 // ========================
 // Language Prompts Mapping
@@ -56,18 +57,8 @@ const languagePrompts = {
 // Event Listeners Initialization
 // ========================
 window.addEventListener('load', async () => {
-    await populateCameraList();
-    loadSavedApiKey();
-    loadSavedPrompt();
-    loadIncludeDefaultPromptSetting();
-    loadAutoplaySetting();
-    loadHighContrastSetting();
-    loadDevModeSetting();
-    if (cameraSelect.options.length > 0 && !cameraSelect.disabled) {
-        // Select the back camera by default (assuming it's the last in the list)
-        cameraSelect.selectedIndex = cameraSelect.options.length - 1;
-        await initCamera(cameraSelect.value);
-    }
+    await initializeCamera();
+    loadSettingsFromLocalStorage();
     initCustomizationControls();
     initTabNavigation();
     initVideoCaptureActions();
@@ -75,8 +66,40 @@ window.addEventListener('load', async () => {
 });
 
 // ========================
-// Camera Functions
+// Camera Initialization Functions
 // ========================
+
+// Function to initialize camera
+async function initializeCamera() {
+    try {
+        // Request access to any camera to get device labels
+        const initialStream = await navigator.mediaDevices.getUserMedia({ video: true });
+        video.srcObject = initialStream;
+        await populateCameraList();
+        initialStream.getTracks().forEach(track => track.stop()); // Stop the initial stream
+
+        // After having device labels, select the back camera if available
+        const savedCameraId = localStorage.getItem('selectedCameraId');
+        if (savedCameraId) {
+            cameraSelect.value = savedCameraId;
+            await initCamera(savedCameraId);
+        } else {
+            // Attempt to select the back camera based on label or facing mode
+            const backCameraOption = Array.from(cameraSelect.options).find(option => /back|rear|environment/i.test(option.text));
+            if (backCameraOption) {
+                cameraSelect.value = backCameraOption.value;
+                await initCamera(backCameraOption.value);
+            } else if (cameraSelect.options.length > 0) {
+                // If no back camera, select the first available
+                cameraSelect.selectedIndex = 0;
+                await initCamera(cameraSelect.value);
+            }
+        }
+    } catch (err) {
+        console.error('Error initializing camera:', err);
+        addToLog('Error accessing camera.', true);
+    }
+}
 
 // Function to populate camera selection drop-down
 async function populateCameraList() {
@@ -89,7 +112,16 @@ async function populateCameraList() {
         videoDevices.forEach((device, index) => {
             const option = document.createElement('option');
             option.value = device.deviceId;
-            option.text = device.label || `Camera ${index + 1}`;
+            // Determine if the camera is front or back based on label or facing mode
+            let cameraLabel = device.label || `Camera ${index + 1}`;
+            if (device.label) {
+                if (/back|rear|environment/i.test(device.label)) {
+                    cameraLabel = `Back Camera - ${device.label}`;
+                } else if (/front|user/i.test(device.label)) {
+                    cameraLabel = `Front Camera - ${device.label}`;
+                }
+            }
+            option.text = cameraLabel;
             cameraSelect.appendChild(option);
         });
 
@@ -124,6 +156,8 @@ async function initCamera(deviceId) {
         const stream = await navigator.mediaDevices.getUserMedia(constraints);
         video.srcObject = stream;
         addToLog('Camera initialized. Ready to capture.');
+        // Save selected camera to localStorage
+        localStorage.setItem('selectedCameraId', deviceId);
     } catch (err) {
         console.error('Error accessing camera:', err);
         addToLog('Camera access denied or not available.', true);
@@ -242,13 +276,15 @@ async function captureAndAnalyzeImage(audioPrompt = '') {
 
     const apiKey = apiKeyInput.value.trim();
     if (!apiKey) {
-        addToLog('Please enter your OpenAI API key.', true);
+        addToLog('API Key missing. Please add your OpenAI API key.', true);
+        speakText('Please add your API key.');
         return;
     }
 
     // Check if camera is initialized
     if (!video.srcObject) {
         addToLog('Camera not initialized.', true);
+        speakText('Camera not initialized.');
         return;
     }
 
@@ -261,7 +297,7 @@ async function captureAndAnalyzeImage(audioPrompt = '') {
         const imageDataUrl = captureImage();
         
         await speakText('Image taken.');
-        
+
         // Provide Audio Feedback
         const imageBlob = dataURLtoBlob(imageDataUrl);
 
@@ -270,10 +306,10 @@ async function captureAndAnalyzeImage(audioPrompt = '') {
         if (audioPrompt) {
             if (includeDefaultPrompt) {
                 promptText = `${languagePrompts[selectedLanguage]} ${audioPrompt}`;
-                addToLog('Image will be sent with default prompt + Audio prompt.');
+                addToLog('Image will be sent with default prompt and audio prompt.');
             } else {
                 promptText = audioPrompt;
-                addToLog('Image will be sent with Audio prompt.');
+                addToLog('Image will be sent with audio prompt only.');
             }
         } else {
             promptText = customPrompt.value.trim() !== '' ? customPrompt.value.trim() : (languagePrompts[selectedLanguage] || languagePrompts['en-US']);
@@ -289,7 +325,7 @@ async function captureAndAnalyzeImage(audioPrompt = '') {
 
         // Step 4: Provide Audio Feedback
         if (audioPrompt) {
-            await speakText('Image sent with Audio prompt.');
+            await speakText('Image sent with audio prompt.');
         } else {
             await speakText('Image sent.');
         }
@@ -327,8 +363,8 @@ function speakText(text) {
         if (isAutoPlay) {
             const utterance = new SpeechSynthesisUtterance(text);
             // Determine language for utterance
-            // 'Image sent with Audio prompt.' and 'Image sent.' should always be in English
-            if (text === 'Image sent.' || text === 'Image sent with Audio prompt.') {
+            // 'Image sent with audio prompt.' and 'Image sent.' should always be in English
+            if (/image sent/i.test(text)) {
                 utterance.lang = 'en-US';
             } else {
                 utterance.lang = selectedLanguage;
@@ -385,7 +421,7 @@ function initTabNavigation() {
     });
 }
 
-// Modify the tab switching to check Dev Mode state
+// Function to activate a specific tab
 function activateTab(tabId) {
     // Deactivate all tabs
     const tabs = document.querySelectorAll('#tab-navigation button');
@@ -398,6 +434,7 @@ function activateTab(tabId) {
     const tabPanels = document.querySelectorAll('main section[role="tabpanel"]');
     tabPanels.forEach(panel => {
         panel.hidden = true;
+        panel.setAttribute('aria-hidden', 'true');
     });
 
     // Activate the selected tab
@@ -408,6 +445,7 @@ function activateTab(tabId) {
     // Show the corresponding tab panel
     const activePanel = document.getElementById(tabId);
     activePanel.hidden = false;
+    activePanel.setAttribute('aria-hidden', 'false');
 
     // Check and apply Dev Mode state when switching tabs
     checkDevModeOnTabSwitch();
@@ -420,12 +458,11 @@ function activateTab(tabId) {
 // Function to initialize customization controls
 function initCustomizationControls() {
     // Text Size Controls
-    let currentFontSize = 16; // Default font size in pixels
-
     increaseTextButton.addEventListener('click', () => {
         currentFontSize += 2;
         document.body.style.fontSize = `${currentFontSize}px`;
         addToLog(`Text size increased to ${currentFontSize}px.`);
+        localStorage.setItem('fontSize', currentFontSize);
     });
 
     decreaseTextButton.addEventListener('click', () => {
@@ -433,6 +470,7 @@ function initCustomizationControls() {
             currentFontSize -= 2;
             document.body.style.fontSize = `${currentFontSize}px`;
             addToLog(`Text size decreased to ${currentFontSize}px.`);
+            localStorage.setItem('fontSize', currentFontSize);
         }
     });
 
@@ -460,6 +498,7 @@ function initCustomizationControls() {
         // Always update the custom prompt to the default prompt of the selected language
         customPrompt.value = languagePrompts[selectedLanguage] || languagePrompts['en-US'];
         saveCustomPrompt();
+        localStorage.setItem('selectedLanguage', selectedLanguage);
     });
 
     // Include Default Prompt Checkbox
@@ -469,6 +508,54 @@ function initCustomizationControls() {
         addToLog(`Including default prompt is now ${status}.`);
         localStorage.setItem('includeDefaultPrompt', includeDefaultPrompt);
     });
+}
+
+// Function to load customization settings from localStorage
+function loadCustomizationSettings() {
+    // Font Size
+    const savedFontSize = localStorage.getItem('fontSize');
+    if (savedFontSize) {
+        currentFontSize = parseInt(savedFontSize);
+        document.body.style.fontSize = `${currentFontSize}px`;
+    }
+
+    // High Contrast
+    const savedHighContrast = localStorage.getItem('isHighContrast') === 'true';
+    if (savedHighContrast) {
+        document.body.classList.add('high-contrast');
+        isHighContrast = true;
+    } else {
+        document.body.classList.remove('high-contrast');
+        isHighContrast = false;
+    }
+
+    // Auto-Play
+    const savedAutoPlay = localStorage.getItem('isAutoPlay');
+    if (savedAutoPlay === 'false') {
+        isAutoPlay = false;
+        toggleAutoplayButton.textContent = `🔊 Auto-Play: Off`;
+    } else {
+        isAutoPlay = true;
+        toggleAutoplayButton.textContent = `🔊 Auto-Play: On`;
+    }
+
+    // Language
+    const savedLanguage = localStorage.getItem('selectedLanguage');
+    if (savedLanguage && languagePrompts[savedLanguage]) {
+        selectedLanguage = savedLanguage;
+        languageSelector.value = selectedLanguage;
+        customPrompt.value = languagePrompts[selectedLanguage];
+    }
+
+    // Include Default Prompt
+    const savedIncludeDefaultPrompt = localStorage.getItem('includeDefaultPrompt');
+    if (savedIncludeDefaultPrompt === 'false') {
+        includeDefaultPrompt = false;
+        includeDefaultPromptCheckbox.checked = false;
+    } else {
+        includeDefaultPrompt = true;
+        includeDefaultPromptCheckbox.checked = true;
+    }
 }
 
 // ========================
@@ -579,6 +666,7 @@ function handleTouchEnd(event) {
 function startRecordingAudioPrompt() {
     if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
         addToLog('Speech Recognition not supported in your browser.', true);
+        speakText('Speech recognition is not supported in your browser.');
         return;
     }
 
@@ -632,43 +720,16 @@ function stopRecordingAudioPrompt() {
 }
 
 // ========================
-// Settings Load Functions
+// Settings Load and Save Functions
 // ========================
 
-// Function to load include default prompt setting from localStorage
-function loadIncludeDefaultPromptSetting() {
-    const savedSetting = localStorage.getItem('includeDefaultPrompt');
-    if (savedSetting === 'false') {
-        includeDefaultPrompt = false;
-        includeDefaultPromptCheckbox.checked = false;
-    } else {
-        includeDefaultPrompt = true;
-        includeDefaultPromptCheckbox.checked = true;
-    }
-}
-
-// Function to load autoplay setting from localStorage
-function loadAutoplaySetting() {
-    const savedSetting = localStorage.getItem('isAutoPlay');
-    if (savedSetting === 'false') {
-        isAutoPlay = false;
-        toggleAutoplayButton.textContent = `🔊 Auto-Play: Off`;
-    } else {
-        isAutoPlay = true;
-        toggleAutoplayButton.textContent = `🔊 Auto-Play: On`;
-    }
-}
-
-// Function to load high contrast setting from localStorage
-function loadHighContrastSetting() {
-    const savedSetting = localStorage.getItem('isHighContrast');
-    if (savedSetting === 'true') {
-        isHighContrast = true;
-        document.body.classList.add('high-contrast');
-    } else {
-        isHighContrast = false;
-        document.body.classList.remove('high-contrast');
-    }
+// Function to load all settings from localStorage
+function loadSettingsFromLocalStorage() {
+    loadSavedApiKey();
+    loadSavedPrompt();
+    loadIncludeDefaultPromptSetting();
+    loadCustomizationSettings();
+    loadDevModeSetting();
 }
 
 // Function to load saved API key from localStorage
@@ -692,6 +753,12 @@ function saveApiKey() {
     }
 }
 
+// Save API key when input changes
+apiKeyInput.addEventListener('change', saveApiKey);
+
+// Save API key checkbox state
+saveApiKeyCheckbox.addEventListener('change', saveApiKey);
+
 // Function to load saved prompt from localStorage
 function loadSavedPrompt() {
     const savedPrompt = localStorage.getItem('customPrompt');
@@ -708,6 +775,21 @@ function saveCustomPrompt() {
     const prompt = customPrompt.value.trim();
     localStorage.setItem('customPrompt', prompt);
     addToLog('Custom prompt saved.');
+}
+
+// Save custom prompt on input
+customPrompt.addEventListener('input', saveCustomPrompt);
+
+// Function to load include default prompt setting from localStorage
+function loadIncludeDefaultPromptSetting() {
+    const savedSetting = localStorage.getItem('includeDefaultPrompt');
+    if (savedSetting === 'false') {
+        includeDefaultPrompt = false;
+        includeDefaultPromptCheckbox.checked = false;
+    } else {
+        includeDefaultPrompt = true;
+        includeDefaultPromptCheckbox.checked = true;
+    }
 }
 
 // ========================
