@@ -65,6 +65,7 @@ window.addEventListener('load', async () => {
     initTabNavigation();
     initVideoCaptureActions();
     initReplayButton();
+    activateTab('camera-log'); // Set 'camera-log' as the default active tab
 });
 
 // ========================
@@ -430,7 +431,13 @@ function activateTab(tabId) {
     tabs.forEach(tab => {
         tab.classList.remove('active');
         tab.setAttribute('aria-selected', 'false');
+        tab.style.display = 'block'; // Show all tabs initially
     });
+
+    // Hide the active tab button
+    const activeTab = document.getElementById('tab-' + tabId);
+    activeTab.style.display = 'none'; // Hide the currently active tab
+    activeTab.setAttribute('aria-selected', 'true');
 
     // Hide all tab panels
     const tabPanels = document.querySelectorAll('main section[role="tabpanel"]');
@@ -439,15 +446,13 @@ function activateTab(tabId) {
         panel.setAttribute('aria-hidden', 'true');
     });
 
-    // Activate the selected tab
-    const activeTab = document.getElementById('tab-' + tabId);
-    activeTab.classList.add('active');
-    activeTab.setAttribute('aria-selected', 'true');
-
     // Show the corresponding tab panel
     const activePanel = document.getElementById(tabId);
     activePanel.hidden = false;
     activePanel.setAttribute('aria-hidden', 'false');
+
+    // Apply the 'active' class to the corresponding tab panel
+    activeTab.classList.add('active');
 
     // Check and apply Dev Mode state when switching tabs
     checkDevModeOnTabSwitch();
