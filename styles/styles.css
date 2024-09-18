@@ -360,7 +360,7 @@ textarea:focus {
     align-items: center;
     justify-content: center;
     width: 100%;
-    min-height: 3em; 
+    min-height: ; 
 }
 
 #save-settings-button i {
