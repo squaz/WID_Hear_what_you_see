@@ -323,13 +323,15 @@ export default class UIManager {
 
 // Mouse Events
 handleMouseDown(event) {
-  if (settingsManager.get('customization.isAudioPromptEnabled')) {
-    // Start hold timer only if the feature is enabled
-    this.speechManager.holdTimer = setTimeout(() => {
-      this.speechManager.isHoldAction = true;
+  this.speechManager.holdTimer = setTimeout(() => {
+    this.speechManager.isHoldAction = true;
+    if (settingsManager.get('customization.isAudioPromptEnabled')) {
       this.speechManager.startRecording(this.captureAndAnalyzeImage.bind(this));
-    }, this.speechManager.holdThreshold);
-  }
+    } else {
+      this.logger.add(messages.errors.audioPromptDisabled, true);
+      this.speechManager.speak(messages.errors.audioPromptDisabled);
+    }
+  }, this.speechManager.holdThreshold);
 }
 
 handleMouseUp(event) {
@@ -378,13 +380,15 @@ handleMouseLeave(event) {
 handleTouchStart(event) {
   event.preventDefault(); // Prevent default behavior
 
-  // Only start the hold timer if the feature is enabled
-  if (settingsManager.get('customization.isAudioPromptEnabled')) {
-    this.speechManager.holdTimer = setTimeout(() => {
-      this.speechManager.isHoldAction = true;
+  this.speechManager.holdTimer = setTimeout(() => {
+    this.speechManager.isHoldAction = true;
+    if (settingsManager.get('customization.isAudioPromptEnabled')) {
       this.speechManager.startRecording(this.captureAndAnalyzeImage.bind(this));
-    }, this.speechManager.holdThreshold);
-  }
+    } else {
+      this.logger.add(messages.errors.audioPromptDisabled, true);
+      this.speechManager.speak(messages.errors.audioPromptDisabled);
+    }
+  }, this.speechManager.holdThreshold);
 }
 
 handleTouchEnd(event) {

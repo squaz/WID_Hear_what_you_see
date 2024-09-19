@@ -11,7 +11,7 @@ export default class SpeechManager {
     this.isRecording = false;
     this.isPlaying = false; // Initialize isPlaying flag
     this.holdTimer = null;
-    this.holdThreshold = 2000; // 2 seconds
+    this.holdThreshold = 1200; // 1.2 seconds
     this.isHoldAction = false;
   }
 

@@ -9,6 +9,7 @@ export const messages = {
       cameraAccessDenied: 'Camera access denied or not available.',
       cameraNotFound: 'No cameras found on this device.',
       speechNotSupported: 'Speech recognition is not supported in your browser.',
+      audioPromptDisabled: 'Recording audio prompts is disabled in the settings.',
       audioPlaybackError: 'Error during audio playback.',
       speechRecognitionError: 'Error during speech recognition.',
       recordingInProgress: 'Please wait until the current description is finished.',
