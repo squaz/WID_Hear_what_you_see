@@ -70,29 +70,33 @@ footer p {
 /* Tab Navigation Styles */
 #tab-navigation {
     display: flex;
-    justify-content: center;
+    justify-content: space-between; /* Ensure buttons span across the container */
     margin-top: 1em;
     margin-bottom: 1em; /* Add margin to separate from footer */
+    width: 100%; /* Ensure it spans the full width */
+    gap: 0.5em; /* Add spacing between the buttons */
+    padding: 0 1em; /* Add padding to align with the main content */
 }
 
 #tab-navigation button {
-    padding: 0.8em 1.5em;
+    flex: 1; /* Make buttons take equal space */
+    padding: 0.8em 0; /* Adjust padding for full-width buttons */
     font-size: 1.2em; /* Adjust the font size */
     border: none;
-    border-bottom: 3px solid transparent;
+    border-radius: 8px; /* Optional: rounded corners */
     background-color: #0a84ff; /* Change background color */
     color: white;
     cursor: pointer;
-    transition: background-color 0.3s, border-color 0.3s;
-    border-radius: 8px; /* Optional: rounded corners */
-    margin: 0 5px; /* Optional: spacing between tabs */
+    transition: background-color 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Center text horizontally */
 }
 
 #tab-navigation button.active,
 #tab-navigation button:hover,
 #tab-navigation button:focus {
     background-color: #0a84ff; /* Change background color for active/hover states */
-    border-bottom: 3px solid #0a84ff;
     outline: none;
 }
 
@@ -360,7 +364,6 @@ textarea:focus {
     align-items: center;
     justify-content: center;
     width: 100%;
-    min-height: ; 
 }
 
 #save-settings-button i {
@@ -396,7 +399,7 @@ textarea:focus {
 /* Responsive Design */
 @media (max-width: 768px) {
     #tab-navigation {
-        flex-direction: column;
+        flex-direction: row;
     }
 
     #customization-container button {

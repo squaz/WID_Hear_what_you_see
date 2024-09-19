@@ -13,6 +13,7 @@ export const messages = {
       speechRecognitionError: 'Error during speech recognition.',
       recordingInProgress: 'Please wait until the current description is finished.',
       noResponseToReplay: 'No response to replay.',
+      iosWarning: 'Audio prompt recording currently only works on Android. Enabling this feature on iOS may result in unexpected behavior.'
     },
     status: {
       capturingImage: 'Capturing image...',

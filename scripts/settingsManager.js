@@ -1,5 +1,7 @@
 // scripts/settingsManager.js
 
+import { getPlatform } from './utils.js'
+
 const defaultSettings = {
     camera: {
       selectedCameraId: null,
@@ -13,7 +15,8 @@ const defaultSettings = {
       isAutoPlay: true,
       selectedLanguage: 'en-US',
       includeDefaultPrompt: true,
-      isAudioPromptEnabled: true,
+      // Enabled only for Android by default
+      isAudioPromptEnabled: getPlatform() === 'Android', 
       customPrompt: '',
     },
     devMode: {

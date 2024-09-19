@@ -30,3 +30,19 @@ export function blobToBase64(blob) {
     reader.readAsDataURL(blob);
   });
 }
+
+export function getPlatform() {
+  const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+
+  // iOS detection
+  if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+    return 'iOS';
+  }
+
+  // Android detection
+  if (/android/i.test(userAgent)) {
+    return 'Android';
+  }
+
+  return 'Other';
+}
