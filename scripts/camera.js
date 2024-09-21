@@ -2,7 +2,7 @@
 
 import settingsManager from './settingsManager.js';
 import Logger from './logger.js';
-import { messages } from './constants.js';
+import { getMessage } from './utils.js';
 
 export default class CameraManager {
   constructor(videoElement, logger) {
@@ -37,7 +37,7 @@ export default class CameraManager {
       }
     } catch (err) {
       console.error('Error initializing camera:', err);
-      this.logger.add(messages.errors.cameraAccessDenied, true);
+      this.logger.add(getMessage('errors', 'cameraAccessDenied'), true);
     }
   }
 
@@ -66,14 +66,14 @@ export default class CameraManager {
       if (videoDevices.length === 0) {
         const option = document.createElement('option');
         option.value = '';
-        option.text = 'No cameras found';
+        option.text = getMessage('errors', 'cameraNotFound');
         this.cameraSelect.appendChild(option);
         this.cameraSelect.disabled = true;
-        this.logger.add(messages.errors.cameraNotFound, true);
+        this.logger.add(getMessage('errors', 'cameraNotFound'), true);
       }
     } catch (err) {
       console.error('Error enumerating devices:', err);
-      this.logger.add(messages.errors.cameraAccessDenied, true);
+      this.logger.add(getMessage('errors', 'cameraAccessDenied'), true);
     }
   }
 
@@ -92,11 +92,11 @@ export default class CameraManager {
       const stream = await navigator.mediaDevices.getUserMedia(constraints);
       this.videoElement.srcObject = stream;
       this.currentStream = stream;
-      this.logger.add(messages.status.cameraInitialized);
+      this.logger.add(getMessage('status', 'cameraInitialized'));
       settingsManager.set('camera.selectedCameraId', deviceId);
     } catch (err) {
       console.error('Error accessing camera:', err);
-      this.logger.add(messages.errors.cameraAccessDenied, true);
+      this.logger.add(getMessage('errors', 'cameraAccessDenied'), true);
     }
   }
 

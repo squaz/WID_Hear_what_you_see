@@ -1,8 +1,7 @@
 // scripts/apiManager.js
 
 import settingsManager from './settingsManager.js';
-import { dataURLtoBlob, blobToBase64 } from './utils.js';
-import { messages } from './constants.js';
+import { dataURLtoBlob, blobToBase64, getMessage } from './utils.js';
 
 export default class ApiManager {
   constructor(logger) {
@@ -16,7 +15,7 @@ export default class ApiManager {
 
   async getImageDescription(imageBlob, promptText) {
     if (!this.apiKey) {
-      throw new Error(messages.errors.apiKeyMissing);
+      throw new Error(getMessage('errors', 'apiKeyMissing'));
     }
 
     const base64Image = await blobToBase64(imageBlob);
@@ -48,7 +47,7 @@ export default class ApiManager {
     });
 
     if (!response.ok) {
-      let errorMessage = messages.errors.processingError;
+      let errorMessage = getMessage('errors', 'processingError');
       try {
         const errorData = await response.json();
         errorMessage = errorData.error.message || errorMessage;
@@ -62,7 +61,7 @@ export default class ApiManager {
     if (data.choices && data.choices.length > 0) {
       return data.choices[0].message.content.trim();
     } else {
-      throw new Error(messages.errors.noDescription);
+      throw new Error(getMessage('errors', 'noDescription'));
     }
   }
 }

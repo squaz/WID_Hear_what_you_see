@@ -2,7 +2,7 @@
 
 import settingsManager from './settingsManager.js';
 import { languagePrompts } from '../prompts/prompts.js';
-import { messages } from './constants.js';
+import { getMessage } from './utils.js';
 import { dataURLtoBlob, getPlatform } from './utils.js';
 
 export default class UIManager {
@@ -105,7 +105,7 @@ export default class UIManager {
       const defaultPrompt = this.getDefaultPrompt(selectedLanguage);
       this.customPromptInput.value = defaultPrompt;
       settingsManager.set('customization.customPrompt', defaultPrompt);
-      this.logger.add('Default prompt set based on selected language.');
+      this.logger.add(getMessage('status', 'defaultPromptSet'));
     } else {
       this.customPromptInput.value = customPromptText;
     }
@@ -144,7 +144,7 @@ export default class UIManager {
       const defaultPrompt = this.getDefaultPrompt(selectedLanguage);
       this.customPromptInput.value = defaultPrompt;
       settingsManager.set('customization.customPrompt', defaultPrompt);
-      this.logger.add('Custom prompt updated to default for the selected language.');
+      this.logger.add(getMessage('status', 'customPromptUpdated'));
     });
 
     // Include Default Prompt Checkbox
@@ -181,11 +181,11 @@ export default class UIManager {
     this.cameraSelect.addEventListener('change', async () => {
       const selectedDeviceId = this.cameraSelect.value;
       if (!selectedDeviceId) {
-        this.logger.add(messages.errors.cameraNotFound, true);
+        this.logger.add(getMessage('errors', 'cameraNotFound'), true);
         return;
       }
       await this.cameraManager.initCamera(selectedDeviceId);
-      this.logger.add(messages.status.cameraSwitched);
+      this.logger.add(getMessage('status', 'cameraSwitched'));
     });
 
     // Capture Button
@@ -200,10 +200,10 @@ export default class UIManager {
       const includeDefault = settingsManager.get('customization.includeDefaultPrompt');
       if (includeDefault) {
         promptText = `${languagePrompts[settingsManager.get('customization.selectedLanguage')]} ${audioPrompt}`;
-        this.logger.add('Image will be sent with default prompt and audio prompt.');
+        this.logger.add(getMessage('status', 'imageWithAudioAndDefaultPrompt'));
       } else {
         promptText = audioPrompt;
-        this.logger.add('Image will be sent with audio prompt only.');
+        this.logger.add(getMessage('status', 'imageWithAudioPromptOnly'));
       }
     } else {
       const customPromptText = settingsManager.get('customization.customPrompt').trim();
@@ -211,7 +211,7 @@ export default class UIManager {
         customPromptText !== ''
           ? customPromptText
           : languagePrompts[settingsManager.get('customization.selectedLanguage')] || languagePrompts['en-US'];
-      this.logger.add('Image will be sent with default prompt.');
+      this.logger.add(getMessage('status', 'imageWithDefaultPrompt'));
     }
 
     this.logger.add(`Final prompt sent to OpenAI: "${promptText}"`);
@@ -224,11 +224,11 @@ export default class UIManager {
 
   setDevMode(enabled) {
     if (enabled) {
-      this.logger.add(messages.status.devModeEnabled);
+      this.logger.add(getMessage('status', 'devModeEnabled'));
       this.showDevElements();
       this.enableFullscreenCamera();
     } else {
-      this.logger.add(messages.status.devModeDisabled);
+      this.logger.add(getMessage('status', 'devModeDisabled'));
       this.hideDevElements();
       this.disableFullscreenCamera();
     }
@@ -301,8 +301,8 @@ export default class UIManager {
     this.apiManager.updateApiKey();
 
     // Provide feedback to the user
-    this.logger.add(messages.status.settingsSaved);
-    alert(messages.status.settingsSaved);
+    this.logger.add(getMessage('status', 'settingsSaved'));
+    alert(getMessage('status', 'settingsSaved'));
   }
 
   initVideoCaptureActions() {
@@ -321,102 +321,100 @@ export default class UIManager {
     this.videoCaptureButton.addEventListener('touchend', this.handleTouchEnd);
   }
 
-// Mouse Events
-handleMouseDown(event) {
-  this.speechManager.holdTimer = setTimeout(() => {
-    this.speechManager.isHoldAction = true;
-    if (settingsManager.get('customization.isAudioPromptEnabled')) {
-      this.speechManager.startRecording(this.captureAndAnalyzeImage.bind(this));
-    } else {
-      this.logger.add(messages.errors.audioPromptDisabled, true);
-      this.speechManager.speak(messages.errors.audioPromptDisabled);
+  // Mouse Events
+  handleMouseDown(event) {
+    this.speechManager.holdTimer = setTimeout(() => {
+      this.speechManager.isHoldAction = true;
+      if (settingsManager.get('customization.isAudioPromptEnabled')) {
+        this.speechManager.startRecording(this.captureAndAnalyzeImage.bind(this));
+      } else {
+        this.logger.add(getMessage('errors', 'audioPromptDisabled'), true);
+        this.speechManager.speak(getMessage('errors', 'audioPromptDisabled'));
+      }
+    }, this.speechManager.holdThreshold);
+  }
+
+  handleMouseUp(event) {
+    // If the hold timer is active, clear it (user released before threshold)
+    if (this.speechManager.holdTimer) {
+      clearTimeout(this.speechManager.holdTimer);
+      this.speechManager.holdTimer = null;
     }
-  }, this.speechManager.holdThreshold);
-}
 
-
-handleMouseUp(event) {
-  // If the hold timer is active, clear it (user released before threshold)
-  if (this.speechManager.holdTimer) {
-    clearTimeout(this.speechManager.holdTimer);
-    this.speechManager.holdTimer = null;
-  }
-
-  // If it was not a hold action, treat it as a tap (capture and analyze)
-  if (!this.speechManager.isHoldAction) {
-    this.captureAndAnalyzeImage();
-  }
-
-  // If recording is in progress, stop it when the mouse is released
-  if (this.speechManager.isRecording) {
-    this.speechManager.stopRecording();
-  }
-
-  // Reset the hold action flag
-  this.speechManager.isHoldAction = false;
-}
-
-handleMouseLeave(event) {
-  // If the user moves the mouse out before the timer is triggered, treat it as a tap
-  if (this.speechManager.holdTimer) {
-    clearTimeout(this.speechManager.holdTimer);
-    this.speechManager.holdTimer = null;
-  }
-
-  // If it was not a hold action, capture and analyze
-  if (!this.speechManager.isHoldAction) {
-    this.captureAndAnalyzeImage();
-  }
-
-  // Stop recording if it was in progress
-  if (this.speechManager.isRecording) {
-    this.speechManager.stopRecording();
-  }
-
-  // Reset the hold action flag
-  this.speechManager.isHoldAction = false;
-}
-
-// Touch Events
-handleTouchStart(event) {
-  //event.preventDefault(); // Prevent default behavior
-  this.speechManager.holdTimer = setTimeout(() => {
-    this.speechManager.isHoldAction = true;
-    if (settingsManager.get('customization.isAudioPromptEnabled')) {
-      this.speechManager.startRecording(this.captureAndAnalyzeImage.bind(this));
-    } else {
-      this.logger.add(messages.errors.audioPromptDisabled, true);
-      this.speechManager.speak(messages.errors.audioPromptDisabled);
+    // If it was not a hold action, treat it as a tap (capture and analyze)
+    if (!this.speechManager.isHoldAction) {
+      this.captureAndAnalyzeImage();
     }
-  }, this.speechManager.holdThreshold);
-}
 
-handleTouchEnd(event) {
-  //event.preventDefault(); // Prevent default behavior
-  // Clear the hold timer if the touch ended before the threshold
-  if (this.speechManager.holdTimer) {
-    clearTimeout(this.speechManager.holdTimer);
-    this.speechManager.holdTimer = null;
+    // If recording is in progress, stop it when the mouse is released
+    if (this.speechManager.isRecording) {
+      this.speechManager.stopRecording();
+    }
+
+    // Reset the hold action flag
+    this.speechManager.isHoldAction = false;
   }
 
-  // If it was not a hold action, treat it as a tap (capture and analyze)
-  if (!this.speechManager.isHoldAction) {
-    this.captureAndAnalyzeImage();
+  handleMouseLeave(event) {
+    // If the user moves the mouse out before the timer is triggered, treat it as a tap
+    if (this.speechManager.holdTimer) {
+      clearTimeout(this.speechManager.holdTimer);
+      this.speechManager.holdTimer = null;
+    }
+
+    // If it was not a hold action, capture and analyze
+    if (!this.speechManager.isHoldAction) {
+      this.captureAndAnalyzeImage();
+    }
+
+    // Stop recording if it was in progress
+    if (this.speechManager.isRecording) {
+      this.speechManager.stopRecording();
+    }
+
+    // Reset the hold action flag
+    this.speechManager.isHoldAction = false;
   }
 
-  // Stop the recording if it was a hold action and recording is active
-  if (this.speechManager.isRecording) {
-    this.speechManager.stopRecording();
+  // Touch Events
+  handleTouchStart(event) {
+    //event.preventDefault(); // Prevent default behavior
+    this.speechManager.holdTimer = setTimeout(() => {
+      this.speechManager.isHoldAction = true;
+      if (settingsManager.get('customization.isAudioPromptEnabled')) {
+        this.speechManager.startRecording(this.captureAndAnalyzeImage.bind(this));
+      } else {
+        this.logger.add(getMessage('errors', 'audioPromptDisabled'), true);
+        this.speechManager.speak(getMessage('errors', 'audioPromptDisabled'));
+      }
+    }, this.speechManager.holdThreshold);
   }
 
-  // Reset the hold action flag
-  this.speechManager.isHoldAction = false;
-}
+  handleTouchEnd(event) {
+    //event.preventDefault(); // Prevent default behavior
+    // Clear the hold timer if the touch ended before the threshold
+    if (this.speechManager.holdTimer) {
+      clearTimeout(this.speechManager.holdTimer);
+      this.speechManager.holdTimer = null;
+    }
 
+    // If it was not a hold action, treat it as a tap (capture and analyze)
+    if (!this.speechManager.isHoldAction) {
+      this.captureAndAnalyzeImage();
+    }
+
+    // Stop the recording if it was a hold action and recording is active
+    if (this.speechManager.isRecording) {
+      this.speechManager.stopRecording();
+    }
+
+    // Reset the hold action flag
+    this.speechManager.isHoldAction = false;
+  }
 
   async captureAndAnalyzeImage(audioPrompt = '') {
     if (this.isProcessing) {
-      this.logger.add(messages.errors.recordingInProgress, true);
+      this.logger.add(getMessage('errors', 'recordingInProgress'), true);
       return;
     }
 
@@ -424,7 +422,7 @@ handleTouchEnd(event) {
     this.disableCaptureButtons();
 
     if (this.speechManager.isPlaying || this.speechManager.isRecording) {
-      this.logger.add(messages.errors.recordingInProgress, true);
+      this.logger.add(getMessage('errors', 'recordingInProgress'), true);
       this.isProcessing = false; // Reset processing flag
       this.enableCaptureButtons();
       return;
@@ -432,16 +430,16 @@ handleTouchEnd(event) {
 
     const apiKey = settingsManager.get('api.apiKey');
     if (!apiKey) {
-      this.logger.add(messages.errors.apiKeyMissing, true);
-      await this.speechManager.speak(messages.errors.apiKeyMissing);
+      this.logger.add(getMessage('errors', 'apiKeyMissing'), true);
+      await this.speechManager.speak(getMessage('errors', 'apiKeyMissing'));
       this.isProcessing = false; // Reset processing flag
       this.enableCaptureButtons();
       return;
     }
 
     if (!this.cameraManager.videoElement.srcObject) {
-      this.logger.add(messages.errors.cameraNotInitialized, true);
-      await this.speechManager.speak(messages.errors.cameraNotInitialized);
+      this.logger.add(getMessage('errors', 'cameraNotInitialized'), true);
+      await this.speechManager.speak(getMessage('errors', 'cameraNotInitialized'));
       this.isProcessing = false; // Reset processing flag
       this.enableCaptureButtons();
       return;
@@ -449,22 +447,22 @@ handleTouchEnd(event) {
 
     try {
       // Capture Image
-      this.logger.add(messages.status.capturingImage);
+      this.logger.add(getMessage('status', 'capturingImage'));
       const imageDataUrl = this.cameraManager.captureImage(this.canvasElement);
-      await this.speechManager.speak(messages.status.imageCaptured);
+      await this.speechManager.speak(getMessage('status', 'imageCaptured'));
       const imageBlob = dataURLtoBlob(imageDataUrl);
 
       // Build Prompt
       let promptText = this.buildPromptText(audioPrompt);
 
       // Send Image to OpenAI
-      this.logger.add(messages.status.imageSent);
+      this.logger.add(getMessage('status', 'imageSent'));
       const description = await this.apiManager.getImageDescription(imageBlob, promptText);
 
       // Process Response
       this.lastResponse = description;
-      this.logger.add(messages.status.responseReceived);
-      this.logger.add(messages.status.playbackStarted);
+      this.logger.add(getMessage('status', 'responseReceived'));
+      this.logger.add(getMessage('status', 'playbackStarted'));
       await this.speechManager.speak(description);
     } catch (error) {
       this.logger.add(`Error: ${error.message}`, true);
@@ -478,13 +476,13 @@ handleTouchEnd(event) {
   initReplayButton() {
     this.replayButton.addEventListener('click', () => {
       if (this.lastResponse) {
-        this.logger.add(messages.status.playbackStarted);
+        this.logger.add(getMessage('status', 'playbackStarted'));
         this.speechManager.speak(this.lastResponse).catch((error) => {
           console.error('Error during replay:', error);
-          this.logger.add(messages.errors.audioPlaybackError, true);
+          this.logger.add(getMessage('errors', 'audioPlaybackError'), true);
         });
       } else {
-        this.logger.add(messages.errors.noResponseToReplay, true);
+        this.logger.add(getMessage('errors', 'noResponseToReplay'), true);
       }
     });
   }
@@ -540,7 +538,7 @@ handleTouchEnd(event) {
 
   showiOSWarning() {
     // Display a warning message similar to the settings save message
-    this.logger.add(messages.errors.iosWarning, true);
-    alert(messages.errors.iosWarning);
+    this.logger.add(getMessage('errors', 'iosWarning'), true);
+    alert(getMessage('errors', 'iosWarning'));
   }
 }

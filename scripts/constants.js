@@ -1,6 +1,7 @@
 // scripts/constants.js
 
 export const messages = {
+  'en-US': {
     errors: {
       apiKeyMissing: 'API Key missing. Please add your OpenAI API key.',
       cameraNotInitialized: 'Camera not initialized.',
@@ -14,7 +15,9 @@ export const messages = {
       speechRecognitionError: 'Error during speech recognition.',
       recordingInProgress: 'Please wait until the current description is finished.',
       noResponseToReplay: 'No response to replay.',
-      iosWarning: 'Audio prompt recording currently only works on Android. Enabling this feature on iOS may result in unexpected behavior.'
+      iosWarning: 'Audio prompt recording currently only works on Android. Enabling this feature on iOS may result in unexpected behavior.',
+      invalidDataUrl: 'Invalid data URL.',
+      // Add more error messages as needed
     },
     status: {
       capturingImage: 'Capturing image...',
@@ -28,6 +31,114 @@ export const messages = {
       cameraSwitched: 'Camera switched successfully.',
       devModeEnabled: 'Developer Mode enabled.',
       devModeDisabled: 'Developer Mode disabled.',
+      audioPlaybackCompleted: 'Audio playback completed.',
+      autoPlayDisabled: 'Auto-play audio is now disabled.',
+      // Add more status messages as needed
     },
-  };
-  
+  },
+  'de-DE': {
+    errors: {
+      apiKeyMissing: 'API-Schlüssel fehlt. Bitte fügen Sie Ihren OpenAI-API-Schlüssel hinzu.',
+      cameraNotInitialized: 'Kamera nicht initialisiert.',
+      processingError: 'Fehler bei der Bildverarbeitung.',
+      noDescription: 'Keine Beschreibung von OpenAI erhalten.',
+      cameraAccessDenied: 'Kamerazugriff verweigert oder nicht verfügbar.',
+      cameraNotFound: 'Auf diesem Gerät wurden keine Kameras gefunden.',
+      speechNotSupported: 'Spracherkennung wird in Ihrem Browser nicht unterstützt.',
+      audioPromptDisabled: 'Aufnahme von Audioaufforderungen ist in den Einstellungen deaktiviert.',
+      audioPlaybackError: 'Fehler bei der Audiowiedergabe.',
+      speechRecognitionError: 'Fehler bei der Spracherkennung.',
+      recordingInProgress: 'Bitte warten Sie, bis die aktuelle Beschreibung abgeschlossen ist.',
+      noResponseToReplay: 'Keine Antwort zum Wiederholen.',
+      iosWarning: 'Audioaufforderungsaufzeichnung funktioniert derzeit nur auf Android. Das Aktivieren dieser Funktion auf iOS kann zu unerwartetem Verhalten führen.',
+      invalidDataUrl: 'Ungültige Daten-URL.',
+      // Add more error messages as needed
+    },
+    status: {
+      capturingImage: 'Bild wird erfasst...',
+      imageCaptured: 'Bild erfolgreich erfasst.',
+      imageSent: 'Bild an OpenAI gesendet.',
+      processingImage: 'Bild wird verarbeitet...',
+      responseReceived: 'Antwort empfangen.',
+      playbackStarted: 'Audiowiedergabe gestartet.',
+      settingsSaved: 'Einstellungen wurden erfolgreich gespeichert.',
+      cameraInitialized: 'Kamera initialisiert. Bereit zur Aufnahme.',
+      cameraSwitched: 'Kamera erfolgreich gewechselt.',
+      devModeEnabled: 'Entwicklermodus aktiviert.',
+      devModeDisabled: 'Entwicklermodus deaktiviert.',
+      audioPlaybackCompleted: 'Audiowiedergabe abgeschlossen.',
+      autoPlayDisabled: 'Auto-Wiedergabe von Audio ist jetzt deaktiviert.',
+      // Add more status messages as needed
+    },
+  },
+  'es-ES': {
+    errors: {
+      apiKeyMissing: 'Falta la clave API. Por favor, agrega tu clave API de OpenAI.',
+      cameraNotInitialized: 'Cámara no inicializada.',
+      processingError: 'Error al procesar la imagen.',
+      noDescription: 'No se recibió descripción de OpenAI.',
+      cameraAccessDenied: 'Acceso a la cámara denegado o no disponible.',
+      cameraNotFound: 'No se encontraron cámaras en este dispositivo.',
+      speechNotSupported: 'El reconocimiento de voz no es compatible con tu navegador.',
+      audioPromptDisabled: 'La grabación de indicaciones de audio está deshabilitada en la configuración.',
+      audioPlaybackError: 'Error durante la reproducción de audio.',
+      speechRecognitionError: 'Error durante el reconocimiento de voz.',
+      recordingInProgress: 'Por favor, espera hasta que finalice la descripción actual.',
+      noResponseToReplay: 'No hay respuesta para reproducir.',
+      iosWarning: 'La grabación de indicaciones de audio actualmente solo funciona en Android. Habilitar esta función en iOS puede resultar en un comportamiento inesperado.',
+      invalidDataUrl: 'URL de datos inválida.',
+      // Add more error messages as needed
+    },
+    status: {
+      capturingImage: 'Capturando imagen...',
+      imageCaptured: 'Imagen capturada exitosamente.',
+      imageSent: 'Imagen enviada a OpenAI.',
+      processingImage: 'Procesando imagen...',
+      responseReceived: 'Respuesta recibida.',
+      playbackStarted: 'Reproducción de audio iniciada.',
+      settingsSaved: 'La configuración se ha guardado exitosamente.',
+      cameraInitialized: 'Cámara inicializada. Lista para capturar.',
+      cameraSwitched: 'Cámara cambiada exitosamente.',
+      devModeEnabled: 'Modo desarrollador habilitado.',
+      devModeDisabled: 'Modo desarrollador deshabilitado.',
+      audioPlaybackCompleted: 'Reproducción de audio completada.',
+      autoPlayDisabled: 'La reproducción automática de audio está ahora deshabilitada.',
+      // Add more status messages as needed
+    },
+  },
+  'fr-FR': {
+    errors: {
+      apiKeyMissing: "Clé API manquante. Veuillez ajouter votre clé API OpenAI.",
+      cameraNotInitialized: 'Caméra non initialisée.',
+      processingError: "Erreur lors du traitement de l'image.",
+      noDescription: "Aucune description reçue de OpenAI.",
+      cameraAccessDenied: 'Accès à la caméra refusé ou non disponible.',
+      cameraNotFound: "Aucune caméra trouvée sur cet appareil.",
+      speechNotSupported: "La reconnaissance vocale n'est pas prise en charge dans votre navigateur.",
+      audioPromptDisabled: "L'enregistrement des invites audio est désactivé dans les paramètres.",
+      audioPlaybackError: "Erreur lors de la lecture audio.",
+      speechRecognitionError: "Erreur lors de la reconnaissance vocale.",
+      recordingInProgress: "Veuillez attendre que la description actuelle soit terminée.",
+      noResponseToReplay: "Aucune réponse à rejouer.",
+      iosWarning: "L'enregistrement des invites audio fonctionne actuellement uniquement sur Android. Activer cette fonctionnalité sur iOS peut entraîner un comportement inattendu.",
+      invalidDataUrl: "URL de données invalide.",
+      // Add more error messages as needed
+    },
+    status: {
+      capturingImage: "Capture de l'image en cours...",
+      imageCaptured: 'Image capturée avec succès.',
+      imageSent: "Image envoyée à OpenAI.",
+      processingImage: "Traitement de l'image en cours...",
+      responseReceived: 'Réponse reçue.',
+      playbackStarted: "Lecture audio démarrée.",
+      settingsSaved: 'Les paramètres ont été enregistrés avec succès.',
+      cameraInitialized: 'Caméra initialisée. Prête à capturer.',
+      cameraSwitched: 'Caméra changée avec succès.',
+      devModeEnabled: 'Mode développeur activé.',
+      devModeDisabled: 'Mode développeur désactivé.',
+      audioPlaybackCompleted: "Lecture audio terminée.",
+      autoPlayDisabled: "La lecture automatique audio est maintenant désactivée.",
+      // Add more status messages as needed
+    },
+  },
+};

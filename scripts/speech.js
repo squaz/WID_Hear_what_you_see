@@ -1,7 +1,7 @@
 // scripts/speech.js
 
 import settingsManager from './settingsManager.js';
-import { messages } from './constants.js';
+import { getMessage } from './utils.js';
 
 export default class SpeechManager {
   constructor(logger) {
@@ -9,7 +9,7 @@ export default class SpeechManager {
     this.updateSettings();
     this.recognition = null;
     this.isRecording = false;
-    this.isPlaying = false; // Initialize isPlaying flag
+    this.isPlaying = false;
     this.holdTimer = null;
     this.holdThreshold = 1200; // 1.2 seconds
     this.isHoldAction = false;
@@ -30,8 +30,8 @@ export default class SpeechManager {
   speak(text) {
     return new Promise((resolve, reject) => {
       if (!('speechSynthesis' in window)) {
-        alert(messages.errors.speechNotSupported);
-        reject(new Error(messages.errors.speechNotSupported));
+        alert(getMessage('errors', 'speechNotSupported'));
+        reject(new Error(getMessage('errors', 'speechNotSupported')));
         return;
       }
       if (this.isAutoPlay) {
@@ -43,17 +43,17 @@ export default class SpeechManager {
 
         utterance.onend = () => {
           this.isPlaying = false; // Reset isPlaying when speech ends
-          this.logger.add(messages.status.audioPlaybackCompleted);
+          this.logger.add(getMessage('status', 'audioPlaybackCompleted'));
           resolve();
         };
         utterance.onerror = () => {
           this.isPlaying = false; // Reset isPlaying on error
-          this.logger.add(messages.errors.audioPlaybackError, true);
-          reject(new Error(messages.errors.audioPlaybackError));
+          this.logger.add(getMessage('errors', 'audioPlaybackError'), true);
+          reject(new Error(getMessage('errors', 'audioPlaybackError')));
         };
         window.speechSynthesis.speak(utterance);
       } else {
-        this.logger.add(messages.status.autoPlayDisabled);
+        this.logger.add(getMessage('status', 'autoPlayDisabled'));
         resolve();
       }
     });
@@ -61,8 +61,8 @@ export default class SpeechManager {
 
   startRecording(callback) {
     if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-      this.logger.add(messages.errors.speechNotSupported, true);
-      this.speak(messages.errors.speechNotSupported);
+      this.logger.add(getMessage('errors', 'speechNotSupported'), true);
+      this.speak(getMessage('errors', 'speechNotSupported'));
       return;
     }
 
@@ -80,14 +80,14 @@ export default class SpeechManager {
 
     this.recognition.onstart = () => {
       this.isRecording = true;
-      this.logger.add(messages.status.recordingStarted);
+      this.logger.add(getMessage('status', 'recordingStarted'));
       //console.log('Recording started - speech');
     };
 
     this.recognition.onresult = (event) => {
       const transcript = event.results[0][0].transcript;
       this.isRecording = false;
-      this.logger.add(messages.status.recordingStopped);
+      this.logger.add(getMessage('status', 'recordingStopped'));
       this.logger.add(`Audio prompt: "${transcript}"`);
       //console.log('Recording stopped - speech');
       if (callback) callback(transcript);
@@ -96,13 +96,13 @@ export default class SpeechManager {
     this.recognition.onerror = (event) => {
       console.error('Speech recognition error:', event.error);
       this.isRecording = false;
-      this.logger.add(messages.errors.speechRecognitionError, true);
+      this.logger.add(getMessage('errors', 'speechRecognitionError'), true);
     };
 
     this.recognition.onend = () => {
       if (this.isRecording) {
         this.isRecording = false;
-        this.logger.add(messages.status.recordingStopped);
+        this.logger.add(getMessage('status', 'recordingStopped'));
       }
       this.recognition = null;
     };
@@ -115,6 +115,4 @@ export default class SpeechManager {
       this.recognition.stop();
     }
   }
-  
 }
-

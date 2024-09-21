@@ -1,6 +1,7 @@
 // scripts/utils.js
 
 import { messages } from './constants.js';
+import settingsManager from './settingsManager.js';
 
 export function dataURLtoBlob(dataurl) {
   const arr = dataurl.split(',');
@@ -45,4 +46,13 @@ export function getPlatform() {
   }
 
   return 'Other';
+}
+
+export function getMessage(type, key) {
+  const selectedLanguage = settingsManager.get('customization.selectedLanguage');
+  if (messages[selectedLanguage] && messages[selectedLanguage][type] && messages[selectedLanguage][type][key]) {
+    return messages[selectedLanguage][type][key];
+  }
+  // Fallback to English if message not found
+  return messages['en-US'][type][key] || '';
 }
