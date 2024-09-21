@@ -18,7 +18,13 @@ export default class SpeechManager {
   updateSettings() {
     this.isAutoPlay = settingsManager.get('customization.isAutoPlay');
     this.selectedLanguage = settingsManager.get('customization.selectedLanguage');
+    console.log('Speech language:', this.selectedLanguage);
     this.isAudioPromptEnabled = settingsManager.get('customization.isAudioPromptEnabled');
+  }
+
+  updateLanguage() {
+    this.selectedLanguage = settingsManager.get('customization.selectedLanguage');
+    console.log('Speech language:', this.selectedLanguage);
   }
 
   speak(text) {
@@ -31,7 +37,10 @@ export default class SpeechManager {
       if (this.isAutoPlay) {
         this.isPlaying = true; // Set isPlaying to true when speech starts
         const utterance = new SpeechSynthesisUtterance(text);
+        this.updateLanguage();
         utterance.lang = this.selectedLanguage;
+        console.log('Speech language:', this.selectedLanguage);
+
         utterance.onend = () => {
           this.isPlaying = false; // Reset isPlaying when speech ends
           this.logger.add(messages.status.audioPlaybackCompleted);
@@ -63,7 +72,9 @@ export default class SpeechManager {
     }
 
     this.recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+    this.updateLanguage();
     this.recognition.lang = this.selectedLanguage;
+    console.log('Record language:', this.selectedLanguage);
     this.recognition.interimResults = false;
     this.recognition.maxAlternatives = 1;
 
@@ -104,4 +115,6 @@ export default class SpeechManager {
       this.recognition.stop();
     }
   }
+  
 }
+

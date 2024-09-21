@@ -334,6 +334,7 @@ handleMouseDown(event) {
   }, this.speechManager.holdThreshold);
 }
 
+
 handleMouseUp(event) {
   // If the hold timer is active, clear it (user released before threshold)
   if (this.speechManager.holdTimer) {
@@ -378,8 +379,7 @@ handleMouseLeave(event) {
 
 // Touch Events
 handleTouchStart(event) {
-  event.preventDefault(); // Prevent default behavior
-
+  //event.preventDefault(); // Prevent default behavior
   this.speechManager.holdTimer = setTimeout(() => {
     this.speechManager.isHoldAction = true;
     if (settingsManager.get('customization.isAudioPromptEnabled')) {
@@ -392,8 +392,7 @@ handleTouchStart(event) {
 }
 
 handleTouchEnd(event) {
-  event.preventDefault(); // Prevent default behavior
-
+  //event.preventDefault(); // Prevent default behavior
   // Clear the hold timer if the touch ended before the threshold
   if (this.speechManager.holdTimer) {
     clearTimeout(this.speechManager.holdTimer);
